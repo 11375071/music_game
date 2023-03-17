@@ -1,3 +1,5 @@
+<div align="center">
+
 # Music Game
 
 <br>
@@ -12,6 +14,8 @@
     <img alt="stars" src="https://img.shields.io/github/stars/11375071/music_game?style=social">
 </div>
 <br>
+
+</div>
 
 ## Run with Python
 
