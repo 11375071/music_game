@@ -21,13 +21,13 @@ def home_init(game: PyGame, state: StateMachine):
     play_button = Button(
         game, "PLAY", (game.size[0] / 2, game.size[1] / 3),
         font_size=int(min(*game.size) / 5),
-        color=color.Blue2, bg_color=color.white,
+        color=color.Blue2, bg_alpha=0,
         click_func=play
     )
     settings_button = Button(
         game, "SETTINGS", (game.size[0] / 2, game.size[1] / 3 * 2),
         font_size=int(min(*game.size) / 5.5),
-        color=color.Blue2, bg_color=color.white,
+        color=color.Blue2, bg_alpha=0,
         click_func=settings
     )
     home_inited = True
@@ -51,7 +51,7 @@ def home(game: PyGame, state: StateMachine):
     pass
 
     # render
-    game.screen.fill(color.white)
+    game.screen.fill(color.AntiqueWhite2)
     play_button.render()
     settings_button.render()
 

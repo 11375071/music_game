@@ -17,7 +17,7 @@ def settings_init(game: PyGame, state: StateMachine):
     home_button = Button(
         game, "RETURN HOME", (game.size[0] - 10, game.size[1] - 10),
         align="right-down", font_size=int(min(*game.size) / 10),
-        color=color.Pink3, bg_color=color.white,
+        color=color.Pink3, bg_alpha=0,
         click_func=home
     )
     settings_inited = True
