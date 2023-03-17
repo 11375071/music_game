@@ -1,6 +1,7 @@
 from define import PyGame
 import resource.color as color
 
+
 class Button:
 
     def __init__(
@@ -9,7 +10,7 @@ class Button:
         text: str, pos: tuple, align: str = "center",
         font_family: str = "consolas", font_size: int = 100,
         color: tuple = color.PaleGreen2, bg_color: tuple = color.cyan,
-        click_func = None
+        click_func=None
     ):
         self.game = game
         self.text = text
@@ -22,13 +23,16 @@ class Button:
         self.change_text()
 
     def change_text(self):
-        self.text = self.font.render(self.text, 1, self.game.it.Color(self.color))
+        self.text = self.font.render(
+            self.text, 1, self.game.it.Color(self.color)
+        )
         self.size = self.text.get_size()
         self.surface = self.game.it.Surface(self.size)
         self.surface.fill(self.bg_color)
         self.surface.blit(self.text, (0, 0))
         if self.align == "center":
-            self.pos = self.pos[0] - self.size[0] / 2, self.pos[1] - self.size[1] / 2
+            self.pos = self.pos[0] - self.size[0] / 2, \
+                self.pos[1] - self.size[1] / 2
         elif self.align == "right-up":
             self.pos = self.pos[0] - self.size[0], self.pos[1]
         elif self.align == "right-down":
@@ -36,7 +40,7 @@ class Button:
         elif self.align == "left-down":
             self.pos = self.pos[0], self.pos[1] - self.size[1]
         # else: left-up
-        
+
         self.rect = self.game.it.Rect(*self.pos, *self.size)
 
     def render(self):
