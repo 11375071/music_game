@@ -1,6 +1,6 @@
-from define import PyGame, StateMachine
-import resource.color as color
-from material.button import Button
+from utils.define import PyGame, StateMachine
+import utils.color as color
+from obj.button import TextButton
 
 clock = None
 home_button = None
@@ -14,9 +14,15 @@ def play_init(game: PyGame, state: StateMachine):
 
     global clock, home_button, play_inited
     clock = game.it.time.Clock()
-    home_button = Button(
+    home_button = TextButton(
         game, "RETURN HOME", (game.size[0] - 10, game.size[1] - 10),
         align="right-down", font_size=int(min(*game.size) / 10),
+        color=color.Blue2, bg_alpha=0,
+        click_func=home
+    )
+    play_button = TextButton(
+        game, "", (game.size[0] / 2, game.size[1] / 2),
+        align="center", font_size=int(min(*game.size) / 10),
         color=color.Blue2, bg_alpha=0,
         click_func=home
     )

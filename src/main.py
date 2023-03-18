@@ -1,4 +1,4 @@
-from define import PyGame, StateMachine
+from utils.define import PyGame, StateMachine
 from pages.home import home
 from pages.play import play
 from pages.settings import settings

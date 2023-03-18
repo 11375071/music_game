@@ -1,5 +1,5 @@
-from define import PyGame
-import resource.color as color
+from utils.define import PyGame
+import utils.color as color
 
 
 class BandButton:

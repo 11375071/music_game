@@ -1,9 +1,45 @@
-from define import PyGame
-import resource.color as color
-
+from utils.define import PyGame
+import utils.color as color
 
 class Button:
+    def __init__(
+        self,
+        game: PyGame,
+        size: tuple, pos: tuple,
+        bg_color: tuple = color.PaleGreen2, bg_alpha: float = 1,
+        image = None,
+        click_func = None
+    ):
+        self.game = game
+        self.size = size
+        self.pos = pos
+        self.bg_color = bg_color
+        self.bg_alpha = bg_alpha
+        self.click_func = click_func
+        self.image = image
+        print(self.pos, self.size)
+        self.rect = self.game.it.Rect(self.pos, self.size)
 
+        if self.image is not None:
+            self.background = self.game.it.image.load(self.image)
+            self.background = self.game.it.transform.scale(self.background, self.size)
+        else:
+            self.background = self.game.it.Surface(self.size)
+            self.background.fill(self.bg_color)
+            self.background.set_alpha(int(256 * self.bg_alpha))
+
+    def render(self):
+        self.game.screen.blit(self.background, self.pos)
+
+    def click_check(self, event):
+        if self.click_func is not None:
+            pos = self.game.it.mouse.get_pos()
+            if event.type == self.game.it.MOUSEBUTTONDOWN:
+                if self.game.it.mouse.get_pressed()[0]:
+                    if self.rect.collidepoint(*pos):
+                        self.click_func()
+
+class TextButton(Button):
     def __init__(
         self,
         game: PyGame,
@@ -13,17 +49,14 @@ class Button:
         alpha: float = 1, bg_alpha: float = 1,
         click_func=None
     ):
-        self.game = game
+        super().__init__(game, (1, 1), pos, bg_color, bg_alpha, None, click_func)
         self.text = text
-        self.pos = pos
         self.align = align
         self.font = self.game.it.font.SysFont(font_family, font_size)
         self.color = color
-        self.bg_color = bg_color
         self.alpha = alpha
-        self.bg_alpha = bg_alpha
-        self.click_func = click_func
         self.change_text()
+        
 
     def change_text(self):
         self.text = self.font.render(
@@ -54,11 +87,3 @@ class Button:
     def render(self):
         self.game.screen.blit(self.background, self.pos)
         self.game.screen.blit(self.surface, self.pos)
-
-    def click_check(self, event):
-        if self.click_func is not None:
-            pos = self.game.it.mouse.get_pos()
-            if event.type == self.game.it.MOUSEBUTTONDOWN:
-                if self.game.it.mouse.get_pressed()[0]:
-                    if self.rect.collidepoint(*pos):
-                        self.click_func()

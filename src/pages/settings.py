@@ -1,6 +1,6 @@
-from define import PyGame, StateMachine
-import resource.color as color
-from material.button import Button
+from utils.define import PyGame, StateMachine
+import utils.color as color
+from obj.button import TextButton
 
 clock = None
 home_button = None
@@ -14,7 +14,7 @@ def settings_init(game: PyGame, state: StateMachine):
 
     global clock, home_button, settings_inited
     clock = game.it.time.Clock()
-    home_button = Button(
+    home_button = TextButton(
         game, "RETURN HOME", (game.size[0] - 10, game.size[1] - 10),
         align="right-down", font_size=int(min(*game.size) / 10),
         color=color.Pink3, bg_alpha=0,
@@ -24,7 +24,6 @@ def settings_init(game: PyGame, state: StateMachine):
 
 
 def settings(game: PyGame, state: StateMachine):
-
     print("now page: settings")
 
     if not settings_inited:
