@@ -1,13 +1,10 @@
-import pygame
 from typing import List
 from utils.define import PyGame, StateMachine
 import utils.color as color
 from obj.button import Button, TextButton
 from obj.note import Note
 
-
-start_time = None
-clock: pygame.time.Clock = None
+start_time: int = None
 home_button: TextButton = None
 play_button: TextButton = None
 play_inited: bool = False
@@ -19,9 +16,8 @@ def play_init(game: PyGame, state: StateMachine):
     def home():
         state.state = "home"
 
-    global start_time, clock, home_button, play_button, play_inited, notes
+    global start_time, home_button, play_button, play_inited, notes
     start_time = game.it.time.get_ticks()
-    clock = game.it.time.Clock()
 
     def key_press():
         for note in notes:
@@ -90,4 +86,4 @@ def play(game: PyGame, state: StateMachine):
             note.render()
 
     game.it.display.flip()
-    clock.tick(60)
+    game.clock.tick(60)

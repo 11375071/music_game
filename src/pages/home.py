@@ -2,10 +2,9 @@ from utils.define import PyGame, StateMachine
 import utils.color as color
 from obj.button import TextButton
 
-clock = None
-play_button = None
-settings_button = None
-home_inited = False
+play_button: TextButton = None
+settings_button: TextButton = None
+home_inited: bool = False
 
 
 def home_init(game: PyGame, state: StateMachine):
@@ -16,8 +15,7 @@ def home_init(game: PyGame, state: StateMachine):
     def settings():
         state.state = "settings"
 
-    global clock, play_button, settings_button, home_inited
-    clock = game.it.time.Clock()
+    global play_button, settings_button, home_inited
     play_button = TextButton(
         game, "PLAY", (game.size[0] / 2, game.size[1] / 3),
         font_size=int(min(*game.size) / 5),
@@ -54,4 +52,4 @@ def home(game: PyGame, state: StateMachine):
     settings_button.render()
 
     game.it.display.flip()
-    clock.tick(60)
+    game.clock.tick(60)

@@ -6,6 +6,7 @@ class PyGame:
         self.size = width, height
         pygame.init()
         self.surface = pygame.display.set_mode(self.size)
+        self.clock = pygame.time.Clock()
 
     @property
     def screen(self) -> pygame.Surface:
