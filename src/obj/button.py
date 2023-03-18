@@ -1,3 +1,4 @@
+from pygame import event
 from typing import Callable, Optional
 from utils.define import PyGame
 import utils.color as color
@@ -9,7 +10,7 @@ class Button:
         game: PyGame,
         size: tuple, pos: tuple, align: str = "center",
         bg_color: tuple = color.PaleGreen2, bg_alpha: float = 1,
-        image: str = None,
+        image: Optional[str] = None,
         click_func: Optional[Callable] = None
     ):
         self.game = game
@@ -48,7 +49,7 @@ class Button:
     def render(self):
         self.game.screen.blit(self.background, self.pos)
 
-    def click_check(self, event):
+    def click_check(self, event: event.Event):
         if self.click_func is not None:
             pos = self.game.it.mouse.get_pos()
             if event.type == self.game.it.MOUSEBUTTONDOWN:
