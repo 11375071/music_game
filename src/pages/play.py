@@ -1,15 +1,17 @@
+import pygame
+from typing import List
 from utils.define import PyGame, StateMachine
 import utils.color as color
 from obj.button import Button, TextButton
 from obj.note import Note
 
-start_time = None
-clock = None
-home_button = None
-play_button = None
-play_inited = False
-notes = []
 
+start_time = None
+clock: pygame.time.Clock = None
+home_button: TextButton = None
+play_button: TextButton = None
+play_inited: bool = False
+notes: List[Note] = []
 
 
 def play_init(game: PyGame, state: StateMachine):
@@ -38,7 +40,8 @@ def play_init(game: PyGame, state: StateMachine):
 
     # create notes
     for i in range(30):
-        new_note = Note(game, time = i + 1, color = color.Blue, destination = (game.size[0] / 2 - 25, game.size[1] / 2 - 25))
+        new_note = Note(game, time=i + 1, color=color.Blue,
+                        destination=(game.size[0] / 2 - 25, game.size[1] / 2 - 25))
         notes.append(new_note)
 
     # create button
@@ -49,7 +52,8 @@ def play_init(game: PyGame, state: StateMachine):
         click_func=home
     )
     play_button = Button(
-        game, size=(50, 50), pos=(game.size[0] / 2 - 25, game.size[1] / 2 - 25), 
+        game, size=(50, 50), pos=(game.size[0] / 2, game.size[1] / 2),
+        align="center",
         bg_color=color.Red, click_func=key_press
     )
     play_inited = True
