@@ -35,8 +35,6 @@ def home_init(game: PyGame, state: StateMachine):
 
 def home(game: PyGame, state: StateMachine):
 
-    print("now page: home")
-
     if not home_inited:
         home_init(game, state)
 

@@ -24,7 +24,6 @@ def settings_init(game: PyGame, state: StateMachine):
 
 
 def settings(game: PyGame, state: StateMachine):
-    print("now page: settings")
 
     if not settings_inited:
         settings_init(game, state)

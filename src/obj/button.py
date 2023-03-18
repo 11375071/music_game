@@ -17,7 +17,6 @@ class Button:
         self.bg_alpha = bg_alpha
         self.click_func = click_func
         self.image = image
-        print(self.pos, self.size)
         self.rect = self.game.it.Rect(self.pos, self.size)
 
         if self.image is not None:
