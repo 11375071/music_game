@@ -9,12 +9,16 @@ home_button: TextButton = None
 visible_play_button: Button = None
 play_button: Button = None
 play_inited: bool = False
+
 notes: List[Note] = []
+resolved_notes: List[Note] = []
 
 
 def play_init(game: PyGame, state: StateMachine):
 
-    global start_time, home_button, visible_play_button, play_button, play_inited, notes
+    global start_time, \
+        home_button, visible_play_button, play_button, play_inited, \
+        notes, resolved_notes
     start_time = game.it.time.get_ticks()
 
     def home():
@@ -22,20 +26,28 @@ def play_init(game: PyGame, state: StateMachine):
 
     def key_press():
         for note in notes:
-            if note.valid == False:
-                continue
             if abs(note.time) < 0.06:
+                notes.remove(note)
+                resolved_notes.append(note)
                 note.resolved()
-                print("perfect")
+                note.rank("perfect")
+                print(note.rank_type)
                 return
             if abs(note.time) < 0.1:
+                notes.remove(note)
+                resolved_notes.append(note)
                 note.resolved()
-                print("good")
+                note.rank("good")
+                print(note.rank_type)
                 return
             if note.time < 0.15:
-                note.valid = False
+                notes.remove(note)
+                resolved_notes.append(note)
                 note.resolved()
-                print("miss")
+                note.rank("miss")
+                print(note.rank_type)
+                return
+            else:
                 return
 
     # create notes
@@ -68,6 +80,8 @@ def play_init(game: PyGame, state: StateMachine):
 
 def play(game: PyGame, state: StateMachine):
 
+    global start_time, notes
+
     if not play_inited:
         play_init(game, state)
 
@@ -79,14 +93,16 @@ def play(game: PyGame, state: StateMachine):
         play_button.click_check(event)
 
     # control flow and calculate here
-    global start_time
     duration = game.it.time.get_ticks() - start_time
     start_time = game.it.time.get_ticks()
 
     for note in notes:
         note.time = note.time - duration * 0.001
         if note.time < -0.3:
-            note.valid = False
+            notes.remove(note)
+            note.resolved()
+            note.rank("miss")
+            print(note.rank_type)
 
     # render
     game.screen.fill(color.white)
@@ -94,8 +110,7 @@ def play(game: PyGame, state: StateMachine):
     visible_play_button.render()
     play_button.render()
     for note in notes:
-        if note.valid:
-            note.render()
+        note.render()
 
     game.it.display.flip()
     game.clock.tick(60)

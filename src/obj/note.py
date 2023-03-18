@@ -18,7 +18,7 @@ class Note:
         self.color = color
         self.destination = destination
 
-        self.valid = True
+        self.rank_type = "none"
         self.appear = True
 
         self.align_destination()
@@ -36,6 +36,9 @@ class Note:
         elif self.align == "left-down":
             self.destination = self.destination[0], self.destination[1] - self.size[1]
         # else: left-up
+
+    def rank(self, rank_type: str):
+        self.rank_type = rank_type
 
     def resolved(self):
         self.appear = False
