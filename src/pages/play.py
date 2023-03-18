@@ -37,14 +37,14 @@ def play_init(game: PyGame, state: StateMachine):
                 note.rank("perfect")
                 print(note.rank_type)
                 return
-            if abs(note.time) < 0.1:
+            elif abs(note.time) < 0.1:
                 notes.remove(note)
                 resolved_notes.append(note)
                 note.resolved()
                 note.rank("good")
                 print(note.rank_type)
                 return
-            if note.time < 0.15:
+            elif note.time < 0.15:
                 notes.remove(note)
                 resolved_notes.append(note)
                 note.resolved()
@@ -105,6 +105,7 @@ def play(game: PyGame, state: StateMachine):
         note.time = note.time - duration * 0.001
         if note.time < -0.3:
             notes.remove(note)
+            resolved_notes.append(note)
             note.resolved()
             note.rank("miss")
             print(note.rank_type)
