@@ -1,6 +1,8 @@
 from utils.define import PyGame
+from typing import List
+from obj.note import Note
 
-def press(self, notes):
+def press(notes: List[Note]):
     for note in notes:
         if note.valid == False:
             continue

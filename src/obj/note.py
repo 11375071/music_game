@@ -1,8 +1,8 @@
-import pygame
+from utils.define import PyGame
 
 class Note:
     
-    def __init__(self, game, speed = 1, time = 1, size = (50, 10), color = None, destination = (100, 100)) -> None:
+    def __init__(self, game: PyGame, speed = 1, time = 1, size = (50, 10), color = None, destination = (100, 100)) -> None:
         self.game = game
         self.valid = True
         self.speed = speed
