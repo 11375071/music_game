@@ -69,7 +69,6 @@ class TextButton(Button):
     ):
         super().__init__(game, (1, 1), pos, align, bg_color, bg_alpha, None, click_func)
         self.text = text
-        self.align = align
         self.font = self.game.it.font.SysFont(font_family, font_size)
         self.color = color
         self.alpha = alpha
