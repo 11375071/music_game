@@ -10,8 +10,11 @@ visible_play_button: Button = None
 play_button: Button = None
 play_inited: bool = False
 
+# must be in the time order
 notes: List[Note] = []
 resolved_notes: List[Note] = []
+
+# todo: add an appear_notes list to only record the notes on screen
 
 
 def play_init(game: PyGame, state: StateMachine):
@@ -19,6 +22,7 @@ def play_init(game: PyGame, state: StateMachine):
     global start_time, \
         home_button, visible_play_button, play_button, play_inited, \
         notes, resolved_notes
+    
     start_time = game.it.time.get_ticks()
 
     def home():
@@ -75,6 +79,7 @@ def play_init(game: PyGame, state: StateMachine):
         align="center", bg_alpha=0,
         bg_color=color.White, click_func=key_press
     )
+
     play_inited = True
 
 
