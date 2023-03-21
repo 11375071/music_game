@@ -1,3 +1,5 @@
+import numpy as np
+
 from typing import List
 from utils.define import PyGame, StateMachine
 import utils.color as color
@@ -7,9 +9,9 @@ from obj.note import Note
 start_time: int = None
 home_button: TextButton = None
 rank_text: Button = None
-score_text: Button = None
-percentage_text: Button = None
-play_button: Button = None
+score_text: TextButton = None
+percentage_text: TextButton = None
+play_button: List[Button] = []
 play_inited: bool = False
 
 # must be in the time order
@@ -20,6 +22,9 @@ resolved_notes: List[Note] = []
 
 # todo: add an appear_notes list to only record the notes on screen
 
+
+def track_to_destination(game, track):
+    return (game.size[0] / 2 - 100 * track + 150, game.size[1] / 3 * 2)
 
 def play_init(game: PyGame, state: StateMachine):
 
@@ -62,8 +67,8 @@ def play_init(game: PyGame, state: StateMachine):
     # create notes
     for i in range(30):
         new_note = Note(
-            game, time=i + 1, color=color.Blue,
-            destination=(game.size[0] / 2, game.size[1] / 3 * 2)
+            game, time=0.4 * i + 3, color=color.Blue,
+            destination=track_to_destination(game, np.random.randint(0, 4))
         )
         notes.append(new_note)
 
@@ -74,11 +79,15 @@ def play_init(game: PyGame, state: StateMachine):
         color=color.Blue2, bg_alpha=0,
         click_func=home
     )
-    play_button = Button(
-        game, size=(50, 10), pos=(game.size[0] / 2, game.size[1] / 3 * 2),
-        align="center",
-        bg_color=color.Red, click_func=key_press, key=game.it.K_LEFT
-    )
+    key_list = [game.it.K_d, game.it.K_f, game.it.K_j, game.it.K_k]
+    for i in range(4):
+        play_button.append(
+            Button(
+                game, size=(50, 10), pos=track_to_destination(game, i),
+                align="center",
+                bg_color=color.Red, click_func=key_press, key=key_list[i]
+            )
+        )
     rank_text = TextButton(
         game, pos=(game.size[0] / 2, game.size[1] / 3 * 2 + 30),
         align="center", text="hello_world",
@@ -113,7 +122,8 @@ def play(game: PyGame, state: StateMachine):
         if event.type == game.it.QUIT:
             state.quit = True
         home_button.click_check(event)
-        play_button.click_check(event)
+        for i in range(4):
+            play_button[i].click_check(event)
 
     # control flow and calculate here
     duration = game.it.time.get_ticks() - start_time
@@ -151,7 +161,8 @@ def play(game: PyGame, state: StateMachine):
     rank_text.render()
     score_text.render()
     percentage_text.render()
-    play_button.render()
+    for i in range(4):
+        play_button[i].render()
     for note in notes:
         note.render()
 

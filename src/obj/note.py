@@ -7,7 +7,7 @@ class Note:
     def __init__(
         self,
         game: PyGame, align: str = "center",
-        speed: float = 2, time: float = 1, size: tuple = (50, 10),
+        speed: float = 4, time: float = 1, size: tuple = (50, 10),
         color: tuple = color.AliceBlue, destination: tuple = (100, 100)
     ) -> None:
         self.game = game
