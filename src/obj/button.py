@@ -11,7 +11,8 @@ class Button:
         size: tuple, pos: tuple, align: str = "center",
         bg_color: tuple = color.PaleGreen2, bg_alpha: float = 1,
         image: Optional[str] = None,
-        click_func: Optional[Callable] = None
+        click_func: Optional[Callable] = None,
+        key: Optional[int] = None
     ):
         self.game = game
         self.size = size
@@ -21,6 +22,7 @@ class Button:
         self.bg_alpha = bg_alpha
         self.click_func = click_func
         self.image = image
+        self.key = key
         self.align_position()
         if self.image is not None:
             self.background = self.game.it.image.load(self.image)
@@ -33,28 +35,34 @@ class Button:
 
     def align_position(self):
         if self.align == "center":
-            self.pos = self.pos[0] - self.size[0] / 2, \
+            self.pos_align = self.pos[0] - self.size[0] / 2, \
                 self.pos[1] - self.size[1] / 2
         elif self.align == "right-up":
-            self.pos = self.pos[0] - self.size[0], self.pos[1]
+            self.pos_align = self.pos[0] - self.size[0], self.pos[1]
         elif self.align == "right-down":
-            self.pos = self.pos[0] - self.size[0], self.pos[1] - self.size[1]
+            self.pos_align = self.pos[0] - self.size[0], self.pos[1] - self.size[1]
         elif self.align == "left-down":
-            self.pos = self.pos[0], self.pos[1] - self.size[1]
-        # else: left-up
+            self.pos_align = self.pos[0], self.pos[1] - self.size[1]
+        else:
+            self.pos_align = self.pos
 
         # click rect
-        self.rect = self.game.it.Rect(self.pos, self.size)
+        self.rect = self.game.it.Rect(self.pos_align, self.size)
 
     def render(self):
-        self.game.screen.blit(self.background, self.pos)
+        self.game.screen.blit(self.background, self.pos_align)
 
     def click_check(self, event: event.Event):
         if self.click_func is not None:
             pos = self.game.it.mouse.get_pos()
-            if event.type == self.game.it.MOUSEBUTTONDOWN:
-                if self.game.it.mouse.get_pressed()[0]:
-                    if self.rect.collidepoint(*pos):
+            if self.key == None:
+                if event.type == self.game.it.MOUSEBUTTONDOWN:
+                    if self.game.it.mouse.get_pressed()[0]:
+                        if self.rect.collidepoint(*pos):
+                            self.click_func()
+            else:
+                if event.type == self.game.it.KEYDOWN:
+                    if event.key == self.key:
                         self.click_func()
 
 
@@ -66,16 +74,18 @@ class TextButton(Button):
         font_family: str = "consolas", font_size: int = 100,
         color: tuple = color.PaleGreen2, bg_color: tuple = color.cyan,
         alpha: float = 1, bg_alpha: float = 1,
-        click_func: Optional[Callable] = None
+        click_func: Optional[Callable] = None,
+        key: Optional[int] = None
     ):
-        super().__init__(game, (1, 1), pos, align, bg_color, bg_alpha, None, click_func)
+        super().__init__(game, (1, 1), pos, align, bg_color, bg_alpha, None, click_func, key)
         self.text = text
         self.font = self.game.it.font.SysFont(font_family, font_size)
         self.color = color
         self.alpha = alpha
-        self.change_text()
+        self.change_text(text)
 
-    def change_text(self):
+    def change_text(self, text):
+        self.text = text
         self.text = self.font.render(
             self.text, 1, [*self.color, self.alpha]
         )
@@ -90,5 +100,5 @@ class TextButton(Button):
         self.align_position()
 
     def render(self):
-        self.game.screen.blit(self.background, self.pos)
-        self.game.screen.blit(self.surface, self.pos)
+        self.game.screen.blit(self.background, self.pos_align)
+        self.game.screen.blit(self.surface, self.pos_align)
