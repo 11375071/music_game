@@ -2,7 +2,7 @@ from utils.define import PyGame, StateMachine
 from obj.note import Note
 import utils.color as color
 
-def track_to_destination(game, track):
+def track_to_destination(game: PyGame, track: int):
     track = 3 - track
     return (game.size[0] / 2 - 100 * track + 150, game.size[1] / 3 * 2)
 

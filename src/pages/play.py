@@ -117,13 +117,13 @@ def play_init(game: PyGame, state: StateMachine):
     )
     score_text = TextButton(
         game, pos=(50, 60),
-        align="left_up", text="hello_world",
+        align="left-up", text="hello_world",
         font_size=30, color=color.Red, 
         bg_color=color.White, click_func=None
     )
     percentage_text = TextButton(
         game, pos=(50, 100),
-        align="left_up", text="hello_world",
+        align="left-up", text="hello_world",
         font_size=30, color=color.Red, 
         bg_color=color.White, click_func=None
     )
