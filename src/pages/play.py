@@ -129,7 +129,7 @@ def play_init(game: PyGame, state: StateMachine):
     )
 
     load_music(game, "src\music\Bad Apple!! feat. nomico.ogg")
-    offset = -400
+    offset = -374
     start_time = game.it.time.get_ticks() + offset
     play_inited = True
 

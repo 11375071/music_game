@@ -26,7 +26,6 @@ def load_note_from_txt(game: PyGame, note_path: str):
                 line = line.split()
                 track = int(line[0][:-1])
                 line = line[1:]
-                print(line)
                 for t in line:
                     new_note = Note(
                         game, time=float(t) / bpm * 60, color=color.Blue,
