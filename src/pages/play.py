@@ -2,6 +2,7 @@ import numpy as np
 
 from typing import List
 from utils.define import PyGame, StateMachine
+from utils.load import load_music, load_note_from_txt, track_to_destination
 import utils.color as color
 from obj.button import Button, TextButton
 from obj.note import Note
@@ -19,13 +20,8 @@ play_inited: bool = False
 notes: List[Note] = []
 resolved_notes: List[Note] = []
 
-
-
 # todo: add an appear_notes list to only record the notes on screen
 
-
-def track_to_destination(game, track):
-    return (game.size[0] / 2 - 100 * track + 150, game.size[1] / 3 * 2)
 
 def play_init(game: PyGame, state: StateMachine):
 
@@ -33,7 +29,7 @@ def play_init(game: PyGame, state: StateMachine):
         home_button, replay_button, rank_text, score_text, percentage_text, \
         play_button, play_inited, notes, resolved_notes
     
-    start_time = game.it.time.get_ticks()
+    
     notes = []
     resolved_notes = []
 
@@ -43,8 +39,10 @@ def play_init(game: PyGame, state: StateMachine):
     def replay():
         play_init(game, state)
 
-    def key_press():
+    def key_press(destination):
         for note in notes:
+            if note.destination != destination:
+                continue
             if abs(note.time) < 0.06:
                 notes.remove(note)
                 resolved_notes.append(note)
@@ -68,14 +66,25 @@ def play_init(game: PyGame, state: StateMachine):
                 return
             else:
                 return
+            
+    def key_press_0():
+        return key_press(track_to_destination(game, 0))
+    def key_press_1():
+        return key_press(track_to_destination(game, 1))
+    def key_press_2():
+        return key_press(track_to_destination(game, 2))
+    def key_press_3():
+        return key_press(track_to_destination(game, 3))
+    key_press_func_list = [key_press_0, key_press_1, key_press_2, key_press_3]
 
     # create notes
-    for i in range(30):
-        new_note = Note(
-            game, time=0.4 * i + 3, color=color.Blue,
-            destination=track_to_destination(game, np.random.randint(0, 4))
-        )
-        notes.append(new_note)
+    # for i in range(30):
+    #     new_note = Note(
+    #         game, time=0.4 * i + 3, color=color.Blue,
+    #         destination=track_to_destination(game, np.random.randint(0, 4))
+    #     )
+    #     notes.append(new_note)
+    notes = load_note_from_txt(game, "src\music\Bad Apple.txt")
 
     # create button
     home_button = TextButton(
@@ -97,7 +106,7 @@ def play_init(game: PyGame, state: StateMachine):
             Button(
                 game, size=(50, 10), pos=track_to_destination(game, i),
                 align="center",
-                bg_color=color.Red, click_func=key_press, key=key_list[i]
+                bg_color=color.Red, click_func=key_press_func_list[i], key=key_list[i]
             )
         )
     rank_text = TextButton(
@@ -119,6 +128,9 @@ def play_init(game: PyGame, state: StateMachine):
         bg_color=color.White, click_func=None
     )
 
+    load_music(game, "src\music\Bad Apple!! feat. nomico.ogg")
+    offset = -400
+    start_time = game.it.time.get_ticks() + offset
     play_inited = True
 
 

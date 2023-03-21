@@ -7,7 +7,7 @@ class Note:
     def __init__(
         self,
         game: PyGame, align: str = "center",
-        speed: float = 4, time: float = 1, size: tuple = (50, 10),
+        speed: float = 7, time: float = 1, size: tuple = (50, 10),
         color: tuple = color.AliceBlue, destination: tuple = (100, 100)
     ) -> None:
         self.game = game
@@ -25,17 +25,18 @@ class Note:
 
     def align_destination(self):
         if self.align == "center":
-            self.destination = self.destination[0] - self.size[0] / 2, \
+            self.destination_align = self.destination[0] - self.size[0] / 2, \
                 self.destination[1] - self.size[1] / 2
         elif self.align == "right-up":
-            self.destination = self.destination[0] - self.size[0], \
+            self.destination_align = self.destination[0] - self.size[0], \
                 self.destination[1]
         elif self.align == "right-down":
-            self.destination = self.destination[0] - self.size[0], \
+            self.destination_align = self.destination[0] - self.size[0], \
                 self.destination[1] - self.size[1]
         elif self.align == "left-down":
-            self.destination = self.destination[0], self.destination[1] - self.size[1]
-        # else: left-up
+            self.destination_align = self.destination[0], self.destination[1] - self.size[1]
+        else: 
+            self.destination_align = self.destination[0], self.destination[1]
 
     def rank(self, rank_type: str):
         self.rank_type = rank_type
@@ -47,8 +48,8 @@ class Note:
         if not self.appear:
             return
         self.pos = (
-            self.destination[0],
-            self.destination[1] - 50 * self.time * self.speed
+            self.destination_align[0],
+            self.destination_align[1] - 50 * self.time * self.speed
         )
         self.background = self.game.it.Surface(self.size)
         self.background.fill(self.color)
