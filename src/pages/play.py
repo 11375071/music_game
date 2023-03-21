@@ -8,6 +8,7 @@ from obj.note import Note
 
 start_time: int = None
 home_button: TextButton = None
+replay_button: TextButton = None
 rank_text: Button = None
 score_text: TextButton = None
 percentage_text: TextButton = None
@@ -29,14 +30,18 @@ def track_to_destination(game, track):
 def play_init(game: PyGame, state: StateMachine):
 
     global start_time, \
-        home_button, rank_text, score_text, percentage_text, play_button, play_inited, \
-        notes, resolved_notes
+        home_button, replay_button, rank_text, score_text, percentage_text, \
+        play_button, play_inited, notes, resolved_notes
     
     start_time = game.it.time.get_ticks()
+    notes = []
+    resolved_notes = []
 
     def home():
         state.state = "home"
-        
+
+    def replay():
+        play_init(game, state)
 
     def key_press():
         for note in notes:
@@ -75,10 +80,17 @@ def play_init(game: PyGame, state: StateMachine):
     # create button
     home_button = TextButton(
         game, "RETURN HOME", (game.size[0] - 10, game.size[1] - 10),
-        align="right-down", font_size=int(min(*game.size) / 25),
+        align="right-down", font_size=int(min(*game.size) / 20),
         color=color.Blue2, bg_alpha=0,
         click_func=home
     )
+    replay_button = TextButton(
+        game, "REPLAY", (game.size[0] - 10, 10),
+        align="right-up", font_size=int(min(*game.size) / 20),
+        color=color.Blue2, bg_alpha=0,
+        click_func=replay
+    )
+
     key_list = [game.it.K_d, game.it.K_f, game.it.K_j, game.it.K_k]
     for i in range(4):
         play_button.append(
@@ -122,6 +134,7 @@ def play(game: PyGame, state: StateMachine):
         if event.type == game.it.QUIT:
             state.quit = True
         home_button.click_check(event)
+        replay_button.click_check(event)
         for i in range(4):
             play_button[i].click_check(event)
 
@@ -158,6 +171,7 @@ def play(game: PyGame, state: StateMachine):
     # render
     game.screen.fill(color.white)
     home_button.render()
+    replay_button.render()
     rank_text.render()
     score_text.render()
     percentage_text.render()
