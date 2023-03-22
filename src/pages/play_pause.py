@@ -26,23 +26,23 @@ def play_pause_init(game: PyGame, state: StateMachine):
         (game.size[0] / 2, game.size[1] / 2),
         align="center", bg_alpha=0.85
     )
-    home_button = TextButton(
-        game, "RETURN HOME", (game.size[0] / 2, game.size[1] / 6 * 2),
-        align="center", font_size=int(min(*game.size) / 20),
+    resume_button = TextButton(
+        game, "RESUME", (game.size[0] / 2, game.size[1] / 6 * 2),
+        align="center", font_size=int(min(*game.size) / 15),
         color=color.Blue2, bg_alpha=0,
-        click_func=home
+        click_func=resume
     )
     replay_button = TextButton(
         game, "REPLAY", (game.size[0] / 2, game.size[1] / 6 * 3),
-        align="center", font_size=int(min(*game.size) / 20),
+        align="center", font_size=int(min(*game.size) / 15),
         color=color.Blue2, bg_alpha=0,
         click_func=replay
     )
-    resume_button = TextButton(
-        game, "RESUME", (game.size[0] / 2, game.size[1] / 6 * 4),
-        align="center", font_size=int(min(*game.size) / 20),
+    home_button = TextButton(
+        game, "RETURN HOME", (game.size[0] / 2, game.size[1] / 6 * 4),
+        align="center", font_size=int(min(*game.size) / 15),
         color=color.Blue2, bg_alpha=0,
-        click_func=resume
+        click_func=home
     )
 
     play_pause_inited = True
@@ -61,11 +61,11 @@ def play_pause(game: PyGame, state: StateMachine):
     
     # 不加 mother 的话就没法透明了（透明似乎基于前面 render 的计算）
     # 同时这里使用 specify 是因为这一步之前 state.state 可能已经变成 home 了
-    state.specify_mother_render("play")()
+    state.specify_mother_render("play")(for_pause = True)
     back_layer.render()
-    home_button.render()
-    replay_button.render()
     resume_button.render()
+    replay_button.render()
+    home_button.render()
 
     game.render_update()
     game.clock.tick(60)

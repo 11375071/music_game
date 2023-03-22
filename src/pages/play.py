@@ -131,9 +131,10 @@ def play_init(game: PyGame, state: StateMachine):
     start_time = game.it.time.get_ticks() + offset
     play_inited = True
 
-def render():
+def render(for_pause: bool = False):
     back_layer.render()
-    pause_button.render()
+    if not for_pause:
+        pause_button.render()
     rank_text.render()
     score_text.render()
     percentage_text.render()
