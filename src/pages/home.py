@@ -51,5 +51,5 @@ def home(game: PyGame, state: StateMachine):
     play_button.render()
     settings_button.render()
 
-    game.it.display.flip()
+    game.render_update()
     game.clock.tick(60)

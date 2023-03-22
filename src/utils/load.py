@@ -4,7 +4,7 @@ import utils.color as color
 
 def track_to_destination(game: PyGame, track: int):
     track = 3 - track
-    return (game.size[0] / 2 - 100 * track + 150, game.size[1] / 3 * 2)
+    return (game.size[0] / 2 - 100 * track + 150, game.size[1] / 5 * 4)
 
 def load_music(game: PyGame, music_path: str):
     game.it.mixer.music.load(music_path)

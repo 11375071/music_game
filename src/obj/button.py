@@ -23,11 +23,15 @@ class Button:
         self.click_func = click_func
         self.image = image
         self.key = key
+        self.change_background()
         self.align_position()
+
+    def change_background(self):
         if self.image is not None:
             self.background = self.game.it.image.load(self.image)
             self.background = self.game.it.transform.scale(
-                self.background, self.size)
+                self.background, self.size
+            )
         else:
             self.background = self.game.it.Surface(self.size)
             self.background.fill(self.bg_color)
@@ -77,7 +81,13 @@ class TextButton(Button):
         click_func: Optional[Callable] = None,
         key: Optional[int] = None
     ):
-        super().__init__(game, (1, 1), pos, align, bg_color, bg_alpha, None, click_func, key)
+        self.game = game
+        self.pos = pos
+        self.align = align
+        self.bg_color = bg_color
+        self.bg_alpha = bg_alpha
+        self.click_func = click_func
+        self.key = key
         self.text = text
         self.font = self.game.it.font.SysFont(font_family, font_size)
         self.color = color

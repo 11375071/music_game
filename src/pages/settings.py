@@ -39,5 +39,5 @@ def settings(game: PyGame, state: StateMachine):
     game.screen.fill(color.white)
     home_button.render()
 
-    game.it.display.flip()
+    game.render_update()
     game.clock.tick(60)

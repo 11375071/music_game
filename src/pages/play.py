@@ -1,19 +1,18 @@
-import numpy as np
-
 from typing import List
 from utils.define import PyGame, StateMachine
 from utils.load import load_music, load_note_from_txt, track_to_destination
 import utils.color as color
 from obj.button import Button, TextButton
 from obj.note import Note
+from pages.play_pause import play_pause
 
 start_time: int = None
-home_button: TextButton = None
-replay_button: TextButton = None
-rank_text: Button = None
+back_layer: Button = None
+pause_button: TextButton = None
+rank_text: TextButton = None
 score_text: TextButton = None
 percentage_text: TextButton = None
-play_button: List[Button] = []
+play_button_list: List[Button] = []
 play_inited: bool = False
 
 # must be in the time order
@@ -25,19 +24,16 @@ resolved_notes: List[Note] = []
 
 def play_init(game: PyGame, state: StateMachine):
 
-    global start_time, \
-        home_button, replay_button, rank_text, score_text, percentage_text, \
-        play_button, play_inited, notes, resolved_notes
+    global start_time, back_layer, \
+        pause_button, rank_text, score_text, percentage_text, \
+        play_button_list, play_inited, notes, resolved_notes
     
     
     notes = []
     resolved_notes = []
 
-    def home():
-        state.state = "home"
-
-    def replay():
-        play_init(game, state)
+    def pause():
+        state.sub_page = "pause"
 
     def key_press(destination):
         for note in notes:
@@ -84,25 +80,24 @@ def play_init(game: PyGame, state: StateMachine):
     #         destination=track_to_destination(game, np.random.randint(0, 4))
     #     )
     #     notes.append(new_note)
-    notes = load_note_from_txt(game, "src\music\Bad Apple.txt")
+    notes = load_note_from_txt(game, "src/music/Bad Apple.txt")
 
     # create button
-    home_button = TextButton(
-        game, "RETURN HOME", (game.size[0] - 10, game.size[1] - 10),
-        align="right-down", font_size=int(min(*game.size) / 20),
-        color=color.Blue2, bg_alpha=0,
-        click_func=home
+    back_layer = Button(
+        game, (game.size[0], game.size[1]), (0, 0),
+        bg_color=color.White, align="left-up", bg_alpha=1
     )
-    replay_button = TextButton(
-        game, "REPLAY", (game.size[0] - 10, 10),
+
+    pause_button = TextButton(
+        game, "PAUSE", (game.size[0] - 10, 10),
         align="right-up", font_size=int(min(*game.size) / 20),
         color=color.Blue2, bg_alpha=0,
-        click_func=replay
+        click_func=pause
     )
 
     key_list = [game.it.K_d, game.it.K_f, game.it.K_j, game.it.K_k]
     for i in range(4):
-        play_button.append(
+        play_button_list.append(
             Button(
                 game, size=(50, 10), pos=track_to_destination(game, i),
                 align="center",
@@ -113,26 +108,39 @@ def play_init(game: PyGame, state: StateMachine):
         game, pos=(game.size[0] / 2, game.size[1] / 3 * 2 + 30),
         align="center", text="hello_world",
         font_size=30, color=color.Red, 
-        bg_color=color.White, click_func=None
+        bg_color=color.White, bg_alpha=0,
+        click_func=None
     )
     score_text = TextButton(
         game, pos=(50, 60),
         align="left-up", text="hello_world",
         font_size=30, color=color.Red, 
-        bg_color=color.White, click_func=None
+        bg_color=color.White, bg_alpha=0,
+        click_func=None
     )
     percentage_text = TextButton(
         game, pos=(50, 100),
         align="left-up", text="hello_world",
         font_size=30, color=color.Red, 
-        bg_color=color.White, click_func=None
+        bg_color=color.White, bg_alpha=0,
+        click_func=None
     )
 
-    load_music(game, "src\music\Bad Apple!! feat. nomico.ogg")
+    load_music(game, "src/music/Bad Apple!! feat. nomico.ogg")
     offset = -374
     start_time = game.it.time.get_ticks() + offset
     play_inited = True
 
+def render():
+    back_layer.render()
+    pause_button.render()
+    rank_text.render()
+    score_text.render()
+    percentage_text.render()
+    for i in range(4):
+        play_button_list[i].render()
+    for note in notes:
+        note.render()
 
 def play(game: PyGame, state: StateMachine):
 
@@ -141,14 +149,22 @@ def play(game: PyGame, state: StateMachine):
     if not play_inited:
         play_init(game, state)
 
+    if state.sub_page is not None:
+        state.mother_render = render
+        if state.sub_page == "pause":
+            play_pause(game, state)
+        if state.sub_page == "replay":
+            state.sub_page = None
+            play_init(game, state)
+        return
+
     # input
     for event in game.it.event.get():
         if event.type == game.it.QUIT:
             state.quit = True
-        home_button.click_check(event)
-        replay_button.click_check(event)
+        pause_button.click_check(event)
         for i in range(4):
-            play_button[i].click_check(event)
+            play_button_list[i].click_check(event)
 
     # control flow and calculate here
     duration = game.it.time.get_ticks() - start_time
@@ -181,16 +197,7 @@ def play(game: PyGame, state: StateMachine):
     percentage_text.change_text("acc: " + "%.2f"%(pct * 100) + "%")
 
     # render
-    game.screen.fill(color.white)
-    home_button.render()
-    replay_button.render()
-    rank_text.render()
-    score_text.render()
-    percentage_text.render()
-    for i in range(4):
-        play_button[i].render()
-    for note in notes:
-        note.render()
+    render()
 
-    game.it.display.flip()
+    game.render_update()
     game.clock.tick(60)
