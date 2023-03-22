@@ -27,11 +27,9 @@ def play_init(game: PyGame, state: StateMachine):
     global start_time, back_layer, \
         pause_button, rank_text, score_text, percentage_text, \
         play_button_list, play_inited, notes, resolved_notes
-    
-    
-    notes = []
-    resolved_notes = []
 
+
+    # functions
     def pause():
         state.sub_page = "pause"
 
@@ -72,15 +70,15 @@ def play_init(game: PyGame, state: StateMachine):
     def key_press_3():
         return key_press(track_to_destination(game, 3))
     key_press_func_list = [key_press_0, key_press_1, key_press_2, key_press_3]
+    key_list = [game.it.K_d, game.it.K_f, game.it.K_j, game.it.K_k]
+    key_list_text = ['D', 'F', 'J', 'K']
 
-    # create notes
-    # for i in range(30):
-    #     new_note = Note(
-    #         game, time=0.4 * i + 3, color=color.Blue,
-    #         destination=track_to_destination(game, np.random.randint(0, 4))
-    #     )
-    #     notes.append(new_note)
+
+    # clear and create notes
+    notes = []
+    resolved_notes = []
     notes = load_note_from_txt(game, "src/music/Bad Apple.txt")
+
 
     # create button
     back_layer = Button(
@@ -95,15 +93,25 @@ def play_init(game: PyGame, state: StateMachine):
         click_func=pause, key=game.it.K_SPACE
     )
 
-    key_list = [game.it.K_d, game.it.K_f, game.it.K_j, game.it.K_k]
     for i in range(4):
         play_button_list.append(
             Button(
                 game, size=(50, 10), pos=track_to_destination(game, i),
                 align="center",
-                bg_color=color.Red, click_func=key_press_func_list[i], key=key_list[i]
+                bg_color=color.Red, click_func=key_press_func_list[i],
+                key=key_list[i], only_use_key=True
             )
         )
+        play_button_list.append(
+            TextButton(
+                game, pos=track_to_destination(game, i),
+                align="center", font_size=10,
+                font_family="Arial",
+                text=key_list_text[i],
+                bg_alpha=0, color=color.White,
+            )
+        )
+    
     rank_text = TextButton(
         game, pos=(game.size[0] / 2, game.size[1] / 3 * 2 + 30),
         align="center", text="hello_world",
@@ -111,6 +119,7 @@ def play_init(game: PyGame, state: StateMachine):
         bg_color=color.White, bg_alpha=0,
         click_func=None
     )
+
     score_text = TextButton(
         game, pos=(50, 60),
         align="left-up", text="hello_world",
@@ -118,6 +127,7 @@ def play_init(game: PyGame, state: StateMachine):
         bg_color=color.White, bg_alpha=0,
         click_func=None
     )
+
     percentage_text = TextButton(
         game, pos=(50, 100),
         align="left-up", text="hello_world",
@@ -126,10 +136,13 @@ def play_init(game: PyGame, state: StateMachine):
         click_func=None
     )
 
+
+    # other
     load_music(game, "src/music/Bad Apple!! feat. nomico.ogg")
     offset = -374
     start_time = game.it.time.get_ticks() + offset
     play_inited = True
+
 
 def render(for_pause: bool = False):
     back_layer.render()
@@ -138,18 +151,21 @@ def render(for_pause: bool = False):
     rank_text.render()
     score_text.render()
     percentage_text.render()
-    for i in range(4):
-        play_button_list[i].render()
+    for button in play_button_list:
+        button.render()
     for note in notes:
         note.render()
 
+
 def play(game: PyGame, state: StateMachine):
 
-    global start_time, notes
+    global start_time
 
+    # init
     if not play_inited:
         play_init(game, state)
 
+    # state machine
     if state.sub_page is not None:
         state.mother_render = render
         if state.sub_page == "pause":
@@ -164,8 +180,8 @@ def play(game: PyGame, state: StateMachine):
         if event.type == game.it.QUIT:
             state.quit = True
         pause_button.click_check(event)
-        for i in range(4):
-            play_button_list[i].click_check(event)
+        for i in play_button_list:
+            i.click_check(event)
 
     # control flow and calculate here
     duration = game.it.time.get_ticks() - start_time
@@ -199,6 +215,5 @@ def play(game: PyGame, state: StateMachine):
 
     # render
     render()
-
     game.render_update()
     game.clock.tick(60)

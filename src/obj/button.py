@@ -12,7 +12,8 @@ class Button:
         bg_color: tuple = color.PaleGreen2, bg_alpha: float = 1,
         image: Optional[str] = None,
         click_func: Optional[Callable] = None,
-        key: Optional[int] = None
+        key: Optional[int] = None,
+        only_use_key: bool = False,
     ):
         self.game = game
         self.size = size
@@ -23,6 +24,7 @@ class Button:
         self.click_func = click_func
         self.image = image
         self.key = key
+        self.only_use_key = only_use_key
         self.change_background()
         self.align_position()
 
@@ -59,12 +61,12 @@ class Button:
     def click_check(self, event: event.Event):
         if self.click_func is not None:
             pos = self.game.it.mouse.get_pos()
-            if self.key == None:
+            if not self.only_use_key:
                 if event.type == self.game.it.MOUSEBUTTONDOWN:
                     if self.game.it.mouse.get_pressed()[0]:
                         if self.rect.collidepoint(*pos):
                             self.click_func()
-            else:
+            if self.key is not None:
                 if event.type == self.game.it.KEYDOWN:
                     if event.key == self.key:
                         self.click_func()
@@ -79,7 +81,8 @@ class TextButton(Button):
         color: tuple = color.PaleGreen2, bg_color: tuple = color.cyan,
         alpha: float = 1, bg_alpha: float = 1,
         click_func: Optional[Callable] = None,
-        key: Optional[int] = None
+        key: Optional[int] = None,
+        only_use_key: bool = False,
     ):
         self.game = game
         self.pos = pos
@@ -88,6 +91,7 @@ class TextButton(Button):
         self.bg_alpha = bg_alpha
         self.click_func = click_func
         self.key = key
+        self.only_use_key = only_use_key
         self.text = text
         self.font = self.game.it.font.SysFont(font_family, font_size)
         self.color = color

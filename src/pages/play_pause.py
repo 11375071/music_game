@@ -49,9 +49,11 @@ def play_pause_init(game: PyGame, state: StateMachine):
 
 def play_pause(game: PyGame, state: StateMachine):
 
+    # init
     if not play_pause_inited:
         play_pause_init(game, state)
     
+    # input
     for event in game.it.event.get():
         if event.type == game.it.QUIT:
             state.quit = True
@@ -59,6 +61,7 @@ def play_pause(game: PyGame, state: StateMachine):
         replay_button.click_check(event)
         resume_button.click_check(event)
     
+    # render
     # 不加 mother 的话就没法透明了（透明似乎基于前面 render 的计算）
     # 同时这里使用 specify 是因为这一步之前 state.state 可能已经变成 home 了
     state.specify_mother_render("play")(for_pause = True)
@@ -66,6 +69,5 @@ def play_pause(game: PyGame, state: StateMachine):
     resume_button.render()
     replay_button.render()
     home_button.render()
-
     game.render_update()
     game.clock.tick(60)
