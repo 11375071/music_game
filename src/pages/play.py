@@ -146,15 +146,15 @@ def play_init(game: PyGame, state: StateMachine):
 
 def render(for_pause: bool = False):
     back_layer.render()
+    for button in play_button_list:
+        button.render()
+    for note in notes:
+        note.render()
     if not for_pause:
         pause_button.render()
     rank_text.render()
     score_text.render()
     percentage_text.render()
-    for button in play_button_list:
-        button.render()
-    for note in notes:
-        note.render()
 
 
 def play(game: PyGame, state: StateMachine):
