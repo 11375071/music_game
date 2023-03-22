@@ -30,7 +30,7 @@ def play_pause_init(game: PyGame, state: StateMachine):
         game, "RESUME", (game.size[0] / 2, game.size[1] / 6 * 2),
         align="center", font_size=int(min(*game.size) / 15),
         color=color.Blue2, bg_alpha=0,
-        click_func=resume
+        click_func=resume, key=game.it.K_SPACE
     )
     replay_button = TextButton(
         game, "REPLAY", (game.size[0] / 2, game.size[1] / 6 * 3),

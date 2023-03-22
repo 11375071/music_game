@@ -92,7 +92,7 @@ def play_init(game: PyGame, state: StateMachine):
         game, "PAUSE", (game.size[0] - 10, 10),
         align="right-up", font_size=int(min(*game.size) / 20),
         color=color.Blue2, bg_alpha=0,
-        click_func=pause
+        click_func=pause, key=game.it.K_SPACE
     )
 
     key_list = [game.it.K_d, game.it.K_f, game.it.K_j, game.it.K_k]
