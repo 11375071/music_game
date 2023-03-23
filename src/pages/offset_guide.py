@@ -6,6 +6,7 @@ from obj.button import Button, TextButton
 from obj.note import Note
 
 home_button: TextButton = None
+confirm_button: TextButton = None
 offset_text: TextButton = None
 rank_text: TextButton = None
 play_button_list: List[Button] = []
@@ -19,17 +20,36 @@ offset_list: List[int] = []
 
 def play_init(game: PyGame, state: StateMachine):
 
-    global home_button, rank_text, offset_text, \
+    global home_button, confirm_button, rank_text, offset_text, \
         play_button_list, play_inited, notes
 
     def home():
+        global play_inited, offset_list
+        game.it.mixer.music.unload()
+        play_inited = False
+        offset_list = []
         state.state = "home"
+
+    def confirm():
+        global play_inited, offset_list
+        play_inited = False
+        if len(offset_list):
+            state.offset += int(sum(offset_list) / len(offset_list))
+        offset_list = []
+        state.state = "settings"
 
     home_button = TextButton(
         game, "return home", (game.size[0] - 10, game.size[1] - 10),
         align="right-down", font_size=30,
         color=color.Red3, bg_alpha=0,
         click_func=home
+    )
+
+    confirm_button = TextButton(
+        game, "", (game.size[0] / 2, game.size[1] / 2),
+        align="center", font_size=35,
+        color=color.Red3, bg_alpha=0.4,
+        click_func=confirm
     )
 
     offset_text = TextButton(
@@ -67,7 +87,7 @@ def play_init(game: PyGame, state: StateMachine):
 
     # clear and create notes
     notes = []
-    notes = load_note_from_txt(game, "src/music/Bad Apple.txt")
+    notes = load_note_from_txt(game, "src/music/offset_guide.txt")
     for note in notes:
         note.speed = state.speed
 
@@ -112,6 +132,7 @@ def render():
     rank_text.render()
     offset_text.render()
     home_button.render()
+    confirm_button.render()
 
 
 def offset_guide(game: PyGame, state: StateMachine):
@@ -125,10 +146,15 @@ def offset_guide(game: PyGame, state: StateMachine):
         if event.type == game.it.QUIT:
             state.quit = True
         home_button.click_check(event)
+        confirm_button.click_check(event)
         for i in play_button_list:
             i.click_check(event)
 
     # control flow and calculate here
+    if game.it.mixer.music.get_pos() > 9000:
+        game.it.mixer.music.unload()
+        confirm_button.change_text("confirm")
+
     duration = game.it.mixer.music.get_pos() + state.offset
 
     for note in notes:

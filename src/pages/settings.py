@@ -70,6 +70,8 @@ def settings_init(game: PyGame, state: StateMachine):
         state.state = "home"
 
     def offset_guide():
+        global settings_inited
+        settings_inited = False
         state.state = "offset_guide"
 
     global home_button, settings_inited, speed_ctrl, offset_ctrl, offset_guide_button, whatever_ctrl
