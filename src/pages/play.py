@@ -78,6 +78,8 @@ def play_init(game: PyGame, state: StateMachine):
     notes = []
     resolved_notes = []
     notes = load_note_from_txt(game, "src/music/Bad Apple.txt")
+    for note in notes:
+        note.speed = state.speed
 
 
     # create button
@@ -139,7 +141,7 @@ def play_init(game: PyGame, state: StateMachine):
 
     # other
     load_music(game, "src/music/Bad Apple!! feat. nomico.ogg")
-    offset = -374
+    offset = state.offset
     start_time = game.it.time.get_ticks() + offset
     play_inited = True
 

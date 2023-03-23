@@ -79,7 +79,7 @@ class TextButton(Button):
         text: str, pos: tuple, align: str = "center",
         font_family: str = "consolas", font_size: int = 100,
         color: tuple = color.PaleGreen2, bg_color: tuple = color.cyan,
-        alpha: float = 1, bg_alpha: float = 1,
+        alpha: float = 1, bg_alpha: float = 0,
         click_func: Optional[Callable] = None,
         key: Optional[int] = None,
         only_use_key: bool = False,

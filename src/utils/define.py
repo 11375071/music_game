@@ -35,6 +35,10 @@ class StateMachine:
         self.sub_page_dict: dict = {}
         self.mother_render_dict: dict = {}
 
+        # settings
+        self.speed: int = 5
+        self.offset: int = -374
+
     def __eq__(self, argument: str) -> bool:
         return self.state == argument
 
