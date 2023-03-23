@@ -7,12 +7,13 @@ class Note:
     def __init__(
         self,
         game: PyGame, align: str = "center",
-        speed: float = 11, time: float = 1, size: tuple = (50, 10),
+        speed: float = 11, init_time: float = 1, time: float = 1, size: tuple = (50, 10),
         color: tuple = color.AliceBlue, destination: tuple = (100, 100)
     ) -> None:
         self.game = game
         self.align = align
         self.speed = speed
+        self.init_time = init_time
         self.time = time
         self.size = size
         self.color = color

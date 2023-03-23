@@ -6,7 +6,6 @@ from obj.button import Button, TextButton
 from obj.note import Note
 from pages.play_pause import play_pause
 
-start_time: int = None
 back_layer: Button = None
 pause_button: TextButton = None
 rank_text: TextButton = None
@@ -24,13 +23,14 @@ resolved_notes: List[Note] = []
 
 def play_init(game: PyGame, state: StateMachine):
 
-    global start_time, back_layer, \
+    global back_layer, \
         pause_button, rank_text, score_text, percentage_text, \
         play_button_list, play_inited, notes, resolved_notes
 
 
     # functions
     def pause():
+        game.it.mixer.music.pause()
         state.sub_page = "pause"
 
     def key_press(destination):
@@ -70,8 +70,8 @@ def play_init(game: PyGame, state: StateMachine):
     def key_press_3():
         return key_press(track_to_destination(game, 3))
     key_press_func_list = [key_press_0, key_press_1, key_press_2, key_press_3]
-    key_list = [game.it.K_d, game.it.K_f, game.it.K_j, game.it.K_k]
-    key_list_text = ['D', 'F', 'J', 'K']
+    key_list = [game.it.K_z, game.it.K_x, game.it.K_PERIOD, game.it.K_SLASH]
+    key_list_text = ['z', 'x', '.', '/']
 
 
     # clear and create notes
@@ -141,10 +141,7 @@ def play_init(game: PyGame, state: StateMachine):
 
     # other
     load_music(game, "src/music/Bad Apple!! feat. nomico.ogg")
-    offset = state.offset
-    start_time = game.it.time.get_ticks() + offset
     play_inited = True
-
 
 def render(for_pause: bool = False):
     back_layer.render()
@@ -160,8 +157,6 @@ def render(for_pause: bool = False):
 
 
 def play(game: PyGame, state: StateMachine):
-
-    global start_time
 
     # init
     if not play_inited:
@@ -186,11 +181,10 @@ def play(game: PyGame, state: StateMachine):
             i.click_check(event)
 
     # control flow and calculate here
-    duration = game.it.time.get_ticks() - start_time
-    start_time = game.it.time.get_ticks()
+    duration = game.it.mixer.music.get_pos() + state.offset
 
     for note in notes:
-        note.time = note.time - duration * 0.001
+        note.time = note.init_time - duration * 0.001
         if note.time < -0.3:
             notes.remove(note)
             resolved_notes.append(note)

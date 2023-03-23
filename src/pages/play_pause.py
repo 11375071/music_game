@@ -12,13 +12,16 @@ def play_pause_init(game: PyGame, state: StateMachine):
     global back_layer, home_button, replay_button, resume_button, play_pause_inited
 
     def home():
+        game.it.mixer.music.unload()
         state.sub_page = "replay"
         state.state = "home"
     
     def replay():
+        game.it.mixer.music.play()
         state.sub_page = "replay"
     
     def resume():
+        game.it.mixer.music.unpause()
         state.sub_page = None
 
     back_layer = Button(

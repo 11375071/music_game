@@ -28,7 +28,7 @@ def load_note_from_txt(game: PyGame, note_path: str):
                 line = line[1:]
                 for t in line:
                     new_note = Note(
-                        game, time=float(t) / bpm * 60, color=color.Blue,
+                        game, init_time=float(t) / bpm * 60, color=color.Blue,
                         destination=track_to_destination(game, track)
                     )
                     notes.append(new_note)
