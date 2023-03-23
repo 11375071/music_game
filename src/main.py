@@ -2,7 +2,7 @@ from utils.define import PyGame, StateMachine
 from pages.home import home
 from pages.play import play
 from pages.settings import settings
-
+from pages.offset_guide import offset_guide
 
 def main_game():
 
@@ -18,6 +18,8 @@ def main_game():
             play(game, state)
         elif state == "settings":
             settings(game, state)
+        elif state == "offset_guide":
+            offset_guide(game, state)
 
     game.it.quit()
 

@@ -61,6 +61,7 @@ home_button: TextButton = None
 settings_inited: bool = False
 speed_ctrl: setting_button_group = None
 offset_ctrl: setting_button_group = None
+offset_guide_button: Button = None
 whatever_ctrl: setting_button_group = None
 
 def settings_init(game: PyGame, state: StateMachine):
@@ -68,11 +69,14 @@ def settings_init(game: PyGame, state: StateMachine):
     def home():
         state.state = "home"
 
-    global home_button, settings_inited, speed_ctrl, offset_ctrl, whatever_ctrl
+    def offset_guide():
+        state.state = "offset_guide"
+
+    global home_button, settings_inited, speed_ctrl, offset_ctrl, offset_guide_button, whatever_ctrl
     home_button = TextButton(
-        game, "RETURN HOME", (game.size[0] - 10, game.size[1] - 10),
-        align="right-down", font_size=int(min(*game.size) / 10),
-        color=color.Pink3, bg_alpha=0,
+        game, "return home", (game.size[0] - 10, game.size[1] - 10),
+        align="right-down", font_size=30,
+        color=color.Red3, bg_alpha=0,
         click_func=home
     )
     speed_ctrl = setting_button_group(game, pos=(100, 100),
@@ -80,7 +84,14 @@ def settings_init(game: PyGame, state: StateMachine):
     offset_ctrl = setting_button_group(game, pos=(100, 200),
                                       text="offset: ", default_value=state.offset, 
                                       min_value=-1000, max_value=1000)
-    whatever_ctrl = setting_button_group(game, pos=(100, 300),
+    offset_guide_button = TextButton(
+        game, "offset guide", pos=(100, 250),
+        align="left-up", font_size=30,
+        color=color.Blue3, 
+        bg_alpha=0.4, bg_color=color.Yellow3,
+        click_func=offset_guide
+    )
+    whatever_ctrl = setting_button_group(game, pos=(100, 350),
                                       text="TBD: ")
 
     settings_inited = True
@@ -98,17 +109,19 @@ def settings(game: PyGame, state: StateMachine):
         home_button.click_check(event)
         speed_ctrl.click_check(event)
         offset_ctrl.click_check(event)
+        offset_guide_button.click_check(event)
         whatever_ctrl.click_check(event)
 
     # control flow and calculate here
     state.speed = speed_ctrl.num
-    state.offset = speed_ctrl.num
+    state.offset = offset_ctrl.num
 
     # render
     game.screen.fill(color.white)
     home_button.render()
     speed_ctrl.render()
     offset_ctrl.render()
+    offset_guide_button.render()
     whatever_ctrl.render()
 
     game.render_update()
