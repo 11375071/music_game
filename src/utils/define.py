@@ -38,6 +38,7 @@ class StateMachine:
         # settings
         self.speed: int = 10
         self.offset: int = -40
+        self.lv: int = 1
 
     def __eq__(self, argument: str) -> bool:
         return self.state == argument

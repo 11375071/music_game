@@ -1,6 +1,6 @@
 from typing import List
 from utils.define import PyGame, StateMachine
-from utils.load import load_music, load_note, track_to_destination
+from utils.load import load_music, load_note, track_to_destination, level_to_song_path
 import utils.color as color
 from obj.button import Button, TextButton
 from obj.note import Note
@@ -84,7 +84,7 @@ def play_init(game: PyGame, state: StateMachine):
     # clear and create notes
     notes = []
     resolved_notes = []
-    notes = load_note(game, r"src\songs\Lv.6\stargazer\Various Artists - Malody 4K Regular Dan v3-Starter (Reg-2 Map-1).mc")
+    notes = load_note(game, level_to_song_path(state.lv)[1])
     for note in notes:
         note.speed = state.speed
 
@@ -147,7 +147,7 @@ def play_init(game: PyGame, state: StateMachine):
 
 
     # other
-    load_music(game, r"src\songs\Lv.6\stargazer\Lime - Stargazer.ogg")
+    load_music(game, level_to_song_path(state.lv)[0])
     play_inited = True
 
 def render(for_pause: bool = False):
