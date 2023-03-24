@@ -107,8 +107,7 @@ def play_init(game: PyGame, state: StateMachine):
         play_button_list.append(
             TextButton(
                 game, pos=track_to_destination(game, i),
-                align="center", font_size=10,
-                font_family="Arial",
+                align="center", font_size=15,
                 text=key_list_text[i],
                 bg_alpha=0, color=color.White,
             )
