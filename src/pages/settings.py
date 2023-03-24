@@ -62,7 +62,7 @@ settings_inited: bool = False
 speed_ctrl: setting_button_group = None
 offset_ctrl: setting_button_group = None
 offset_guide_button: Button = None
-whatever_ctrl: setting_button_group = None
+lv_ctrl: setting_button_group = None
 
 def settings_init(game: PyGame, state: StateMachine):
 
@@ -74,7 +74,7 @@ def settings_init(game: PyGame, state: StateMachine):
         settings_inited = False
         state.state = "offset_guide"
 
-    global home_button, settings_inited, speed_ctrl, offset_ctrl, offset_guide_button, whatever_ctrl
+    global home_button, settings_inited, speed_ctrl, offset_ctrl, offset_guide_button, lv_ctrl
     home_button = TextButton(
         game, "return home", (game.size[0] - 10, game.size[1] - 10),
         align="right-down", font_size=30,
@@ -93,8 +93,9 @@ def settings_init(game: PyGame, state: StateMachine):
         bg_alpha=0.4, bg_color=color.Yellow3,
         click_func=offset_guide
     )
-    whatever_ctrl = setting_button_group(game, pos=(100, 350),
-                                      text="TBD: ")
+    lv_ctrl = setting_button_group(game, pos=(100, 350),
+                                      text="song lv: ", default_value=state.lv, 
+                                      min_value=1, max_value=6)
 
     settings_inited = True
 
@@ -112,11 +113,12 @@ def settings(game: PyGame, state: StateMachine):
         speed_ctrl.click_check(event)
         offset_ctrl.click_check(event)
         offset_guide_button.click_check(event)
-        whatever_ctrl.click_check(event)
+        lv_ctrl.click_check(event)
 
     # control flow and calculate here
     state.speed = speed_ctrl.num
     state.offset = offset_ctrl.num
+    state.lv = lv_ctrl.num
 
     # render
     game.screen.fill(color.white)
@@ -124,7 +126,7 @@ def settings(game: PyGame, state: StateMachine):
     speed_ctrl.render()
     offset_ctrl.render()
     offset_guide_button.render()
-    whatever_ctrl.render()
+    lv_ctrl.render()
 
     game.render_update()
     game.clock.tick(60)

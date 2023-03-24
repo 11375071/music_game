@@ -25,8 +25,7 @@ python src/main.py  # to run
 
 ## TODO
 
-- 美化界面
-- 暂停 resume 之后倒计时3，2，1再继续
-- 实现更简便的铺面编码或录入方法
-- 为每个 note 单独显示 perfect 等字符
+- 美化界面，降低读谱压力
+- 制作选曲界面
+- 制作评价结算界面
 - 学习 pygame.sprite，看看能否用来简化代码结构，比如不用写一大堆 xxxButton.render() 和 click_check() 语句

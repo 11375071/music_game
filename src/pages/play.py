@@ -1,6 +1,6 @@
 from typing import List
 from utils.define import PyGame, StateMachine
-from utils.load import load_music, load_note_from_txt, track_to_destination
+from utils.load import load_music, load_note, track_to_destination, level_to_song_path
 import utils.color as color
 from obj.button import Button, TextButton
 from obj.note import Note
@@ -37,14 +37,21 @@ def play_init(game: PyGame, state: StateMachine):
         for note in notes:
             if note.destination != destination:
                 continue
-            if abs(note.time) < 0.06:
+            if abs(note.time) < 0.044:
                 notes.remove(note)
                 resolved_notes.append(note)
                 note.resolved()
                 note.rank("perfect")
                 rank_text.change_text("perfect")
                 return
-            elif abs(note.time) < 0.1:
+            elif abs(note.time) < 0.084:
+                notes.remove(note)
+                resolved_notes.append(note)
+                note.resolved()
+                note.rank("great")
+                rank_text.change_text("great")
+                return
+            elif abs(note.time) < 0.118:
                 notes.remove(note)
                 resolved_notes.append(note)
                 note.resolved()
@@ -77,7 +84,7 @@ def play_init(game: PyGame, state: StateMachine):
     # clear and create notes
     notes = []
     resolved_notes = []
-    notes = load_note_from_txt(game, "src/music/Bad Apple.txt")
+    notes = load_note(game, level_to_song_path(state.lv)[1])
     for note in notes:
         note.speed = state.speed
 
@@ -139,7 +146,7 @@ def play_init(game: PyGame, state: StateMachine):
 
 
     # other
-    load_music(game, "src/music/Bad Apple!! feat. nomico.ogg")
+    load_music(game, level_to_song_path(state.lv)[0])
     play_inited = True
 
 def render(for_pause: bool = False):
@@ -197,8 +204,10 @@ def play(game: PyGame, state: StateMachine):
         max_score += 1000
         if note.rank_type == "perfect":
             score += 1000
+        if note.rank_type == "great":
+            score += 750
         if note.rank_type == "good":
-            score += 600
+            score += 400
 
     if max_score == 0:
         pct = 0

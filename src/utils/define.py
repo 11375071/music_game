@@ -36,8 +36,9 @@ class StateMachine:
         self.mother_render_dict: dict = {}
 
         # settings
-        self.speed: int = 5
-        self.offset: int = 400
+        self.speed: int = 10
+        self.offset: int = -40
+        self.lv: int = 1
 
     def __eq__(self, argument: str) -> bool:
         return self.state == argument
