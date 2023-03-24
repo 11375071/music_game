@@ -1,5 +1,8 @@
+import os
+import yaml
 import pygame
-from typing import Callable, Optional
+from yaml.loader import SafeLoader
+from typing import Callable, Optional, Dict
 
 
 class PyGame:
@@ -28,45 +31,85 @@ class PyGame:
         pygame.display.flip()
 
 
+class StaticData:
+    def __init__(self, root: str, save_name: str) -> None:
+        self.root = root
+        if not os.path.exists(root):
+            os.makedirs(root)
+        self.save_name = save_name
+        self.path = os.path.join(root, save_name)
+        self.dict = {}
+    
+    def __setitem__(self, key: str, value):
+        self.dict[key] = value
+        self.save()
+
+    def setdefault(self, key: str, default = None):
+        res = self.dict.setdefault(key, default)
+        self.save()
+        return res
+    
+    def __getitem__(self, name: str):
+        return self.setdefault(name)
+
+    def save(self, specify_path: str = None):
+        file_name = self.path if specify_path is None else specify_path
+        with open(file_name, 'w') as outfile:
+            yaml.dump(self.dict, outfile, default_flow_style=False, allow_unicode=True)
+    
+    def load(self, specify_path: str = None):
+        file_name = self.path if specify_path is None else specify_path
+        if os.path.isfile(file_name):
+            with open(file_name, 'r') as outfile:
+                self.dict = yaml.load(outfile, Loader=SafeLoader)
+                if type(self.dict) is not dict:
+                    self.dict = {}
+        else:
+            self.dict = {}
+
+
+
 class StateMachine:
     def __init__(self, init_state: str) -> None:
         self.state: str = init_state
         self.quit: bool = False
-        self.sub_page_dict: dict = {}
-        self.mother_render_dict: dict = {}
+        self.__sub_page_dict: dict = {}
+        self.__mother_render_dict: dict = {}
+        self.__data_dict: Dict[str, StaticData] = {}
 
-        # settings
-        self.speed: int = 10
-        self.offset: int = -40
-        self.lv: int = 1
+    def __setitem__(self, name: str, data: StaticData):
+        self.__data_dict[name] = data
+
+    def __getitem__(self, name: str) -> StaticData:
+        return self.__data_dict[name]
 
     def __eq__(self, argument: str) -> bool:
         return self.state == argument
 
     @property
     def sub_page(self) -> str:
-        return self.sub_page_dict.setdefault(self.state, None)
+        return self.__sub_page_dict.setdefault(self.state, None)
     
     @sub_page.setter
     def sub_page(self, sub_page_name: str):
-        self.sub_page_dict[self.state] = sub_page_name
+        self.__sub_page_dict[self.state] = sub_page_name
     
     @property
     def mother_render(self) -> Optional[Callable]:
-        return self.mother_render_dict.setdefault(self.state, None)
+        return self.__mother_render_dict.setdefault(self.state, None)
     
     @mother_render.setter
     def mother_render(self, mother_render_func: Optional[Callable]):
-        self.mother_render_dict[self.state] = mother_render_func
+        self.__mother_render_dict[self.state] = mother_render_func
 
     def specify_mother_render(self, state_name: str) -> Optional[Callable]:
-        return self.mother_render_dict.setdefault(state_name, None)
+        return self.__mother_render_dict.setdefault(state_name, None)
     
     def set_specify_mother_render(self, state_name: str, mother_render_func: str):
-        self.mother_render_dict[state_name] = mother_render_func
+        self.__mother_render_dict[state_name] = mother_render_func
 
     def specify_sub_page(self, state_name: str) -> str:
-        return self.sub_page_dict.setdefault(state_name, None)
+        return self.__sub_page_dict.setdefault(state_name, None)
     
     def set_specify_sub_page(self, state_name: str, sub_page_name: str):
-        self.sub_page_dict[state_name] = sub_page_name
+        self.__sub_page_dict[state_name] = sub_page_name

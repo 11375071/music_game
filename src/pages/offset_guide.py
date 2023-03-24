@@ -34,7 +34,7 @@ def play_init(game: PyGame, state: StateMachine):
         global play_inited, offset_list
         play_inited = False
         if len(offset_list):
-            state.offset += int(sum(offset_list) / len(offset_list))
+            state["normal"]["offset"] += int(sum(offset_list) / len(offset_list))
         offset_list = []
         state.state = "settings"
 
@@ -89,7 +89,7 @@ def play_init(game: PyGame, state: StateMachine):
     notes = []
     notes = load_note_from_txt(game, r"src/songs/Lv.0/offset_guide/offset_guide.txt")
     for note in notes:
-        note.speed = state.speed
+        note.speed = state["normal"]["speed"]
 
     # create button
 
@@ -155,7 +155,7 @@ def offset_guide(game: PyGame, state: StateMachine):
         game.it.mixer.music.unload()
         confirm_button.change_text("confirm")
 
-    duration = game.it.mixer.music.get_pos() + state.offset
+    duration = game.it.mixer.music.get_pos() + state["normal"]["offset"]
 
     for note in notes:
         note.time = note.init_time - duration * 0.001

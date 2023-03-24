@@ -84,9 +84,9 @@ def play_init(game: PyGame, state: StateMachine):
     # clear and create notes
     notes = []
     resolved_notes = []
-    notes = load_note(game, level_to_song_path(state.lv)[1])
+    notes = load_note(game, level_to_song_path(state["normal"]["level"])[1])
     for note in notes:
-        note.speed = state.speed
+        note.speed = state["normal"]["speed"]
 
 
     # create button
@@ -146,7 +146,7 @@ def play_init(game: PyGame, state: StateMachine):
 
 
     # other
-    load_music(game, level_to_song_path(state.lv)[0])
+    load_music(game, level_to_song_path(state["normal"]["level"])[0])
     play_inited = True
 
 def render(for_pause: bool = False):
@@ -187,7 +187,7 @@ def play(game: PyGame, state: StateMachine):
             i.click_check(event)
 
     # control flow and calculate here
-    duration = game.it.mixer.music.get_pos() + state.offset
+    duration = game.it.mixer.music.get_pos() + state["normal"]["offset"]
 
     for note in notes:
         note.time = note.init_time - duration * 0.001
