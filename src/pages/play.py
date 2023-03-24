@@ -122,7 +122,7 @@ def play_init(game: PyGame, state: StateMachine):
     
     rank_text = TextButton(
         game, pos=(game.size[0] / 2, game.size[1] / 3 * 2 + 30),
-        align="center", text="hello_world",
+        align="center", text="",
         font_size=30, color=color.Red, 
         bg_color=color.White, bg_alpha=0,
         click_func=None
@@ -130,7 +130,7 @@ def play_init(game: PyGame, state: StateMachine):
 
     score_text = TextButton(
         game, pos=(50, 60),
-        align="left-up", text="hello_world",
+        align="left-up", text="",
         font_size=30, color=color.Red, 
         bg_color=color.White, bg_alpha=0,
         click_func=None
@@ -138,7 +138,7 @@ def play_init(game: PyGame, state: StateMachine):
 
     percentage_text = TextButton(
         game, pos=(50, 100),
-        align="left-up", text="hello_world",
+        align="left-up", text="",
         font_size=30, color=color.Red, 
         bg_color=color.White, bg_alpha=0,
         click_func=None
