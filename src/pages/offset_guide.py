@@ -87,7 +87,7 @@ def play_init(game: PyGame, state: StateMachine):
 
     # clear and create notes
     notes = []
-    notes = load_note_from_txt(game, r"src\songs\Lv.0\offset_guide\offset_guide.txt")
+    notes = load_note_from_txt(game, r"src/songs/Lv.0/offset_guide/offset_guide.txt")
     for note in notes:
         note.speed = state.speed
 
@@ -121,7 +121,7 @@ def play_init(game: PyGame, state: StateMachine):
     )
 
     # other
-    load_music(game, r"src\songs\Lv.0\offset_guide\Bad Apple!! feat. nomico.ogg")
+    load_music(game, r"src/songs/Lv.0/offset_guide/Bad Apple!! feat. nomico.ogg")
     play_inited = True
 
 def render():

@@ -22,9 +22,11 @@ class setting_button_group:
         )
         x, y, _x, _y = self.text.rect
         self.left_rect = (x + _x, y, _x, _y)
-        self.left = Button(game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y), 
-                           align=align, bg_color=color.Red, image=r"src\image\left_arrow.jpg",
-                           click_func=self.click_left)
+        self.left = Button(
+            game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y), 
+            align=align, bg_color=color.Red, image=r"src/image/left_arrow.jpg",
+            click_func=self.click_left
+        )
         x, y, _x, _y = self.left.rect
         self.num_text = TextButton(
             game, str(self.num), pos=(x + _x + 0.5 * _y, y),
@@ -32,9 +34,11 @@ class setting_button_group:
             color=color.Red
         )
         x, y, _x, _y = self.num_text.rect
-        self.right = Button(game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y), 
-                            align=align, bg_color=color.Red, image=r"src\image\right_arrow.jpg",
-                           click_func=self.click_right)
+        self.right = Button(
+            game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y), 
+            align=align, bg_color=color.Red, image=r"src/image/right_arrow.jpg",
+            click_func=self.click_right
+        )
 
         self.button_list = [self.text, self.left, self.num_text, self.right]
     
