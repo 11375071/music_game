@@ -6,8 +6,8 @@ from pages.offset_guide import offset_guide
 
 def main_game():
 
-    screen_width = 640
-    screen_height = 480
+    screen_width = 1000
+    screen_height = 500
     game = PyGame(screen_width, screen_height)
     state = StateMachine("home")
     
