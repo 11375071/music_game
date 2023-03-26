@@ -92,7 +92,7 @@ def play_init(game: PyGame, state: StateMachine):
     # create button
     back_layer = Button(
         game, (game.size[0], game.size[1]), (0, 0),
-        bg_color=color.White, align="left-up", bg_alpha=1
+        bg_color=color.White, align="left-up", image="src\image\play_background.png"
     )
 
     pause_button = TextButton(

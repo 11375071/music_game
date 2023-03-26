@@ -1,6 +1,11 @@
 from utils.define import PyGame
 import utils.color as color
+import pygame
 
+background = pygame.image.load("src/image/note_green.png")
+background = pygame.transform.scale(
+    background, (50, 10)
+)   
 
 class Note:
 
@@ -52,6 +57,5 @@ class Note:
             self.destination_align[0],
             self.destination_align[1] - 50 * self.time * self.speed
         )
-        self.background = self.game.it.Surface(self.size)
-        self.background.fill(self.color)
-        self.game.screen.blit(self.background, self.pos)
+        background.convert_alpha()
+        self.game.screen.blit(background, self.pos)
