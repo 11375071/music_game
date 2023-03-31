@@ -100,52 +100,6 @@ class Button(SimpleRect):
                         self.click_func()
 
 
-class TextButton(Button):
-    def __init__(
-        self,
-        game: PyGame,
-        text: str, pos: tuple, align: str = "center",
-        font_family: str = "consolas", font_size: int = 100,
-        fr_color: tuple = color.PaleGreen2, fr_alpha: float = 1,
-        bg_color: tuple = color.cyan, bg_alpha: float = 0,
-        click_func: Optional[Callable] = None,
-        key: Optional[int] = None,
-        only_use_key: bool = False,
-    ):
-        self.game = game
-        self.text = text
-        self.pos = pos
-        self.align = align
-        self.font = self.game.it.font.SysFont(font_family, font_size)
-        self.fr_color = fr_color
-        self.fr_alpha = fr_alpha
-        self.bg_color = bg_color
-        self.bg_alpha = bg_alpha
-        self.click_func = click_func
-        self.key = key
-        self.only_use_key = only_use_key
-        self.change_text(text)
-
-    def change_text(self, text):
-        self.text = text
-        self.text = self.font.render(
-            self.text, 1, [*self.fr_color, self.fr_alpha]
-        )
-        self.size = self.text.get_size()
-        self.front = self.game.it.Surface(self.size).convert_alpha()
-        self.front.fill([0, 0, 0, 0])
-        self.front.set_alpha(int(256 * self.fr_alpha))
-        self.front.blit(self.text, (0, 0))
-        self.background = self.game.it.Surface(self.size)
-        self.background.fill(self.bg_color)
-        self.background.set_alpha(int(256 * self.bg_alpha))
-        self.align_position()
-
-    def render(self):
-        self.game.screen.blit(self.background, self.pos_align)
-        self.game.screen.blit(self.front, self.pos_align)
-
-
 class RichRect:
     def __init__(
         self, game: PyGame,
@@ -211,3 +165,112 @@ class RichButton(RichRect):
                 if event.type == self.game.it.KEYDOWN:
                     if event.key == self.key:
                         self.click_func()
+
+
+class TextButton(Button):
+    def __init__(
+        self,
+        game: PyGame,
+        text: str, pos: tuple, align: str = "center",
+        font_family: str = "consolas", font_size: int = 100,
+        fr_color: tuple = color.PaleGreen2, fr_alpha: float = 1,
+        bg_color: tuple = color.cyan, bg_alpha: float = 0,
+        click_func: Optional[Callable] = None,
+        key: Optional[int] = None,
+        only_use_key: bool = False,
+    ):
+        self.game = game
+        self.text = text
+        self.pos = pos
+        self.align = align
+        self.font = self.game.it.font.SysFont(font_family, font_size)
+        self.fr_color = fr_color
+        self.fr_alpha = fr_alpha
+        self.bg_color = bg_color
+        self.bg_alpha = bg_alpha
+        self.click_func = click_func
+        self.key = key
+        self.only_use_key = only_use_key
+        self.change_text(text)
+
+    def change_text(self, text):
+        self.text = text
+        self.text = self.font.render(
+            self.text, 1, [*self.fr_color, self.fr_alpha]
+        )
+        self.size = self.text.get_size()
+        self.front = self.game.it.Surface(self.size).convert_alpha()
+        self.front.fill([0, 0, 0, 0])
+        self.front.set_alpha(int(256 * self.fr_alpha))
+        self.front.blit(self.text, (0, 0))
+        self.background = self.game.it.Surface(self.size)
+        self.background.fill(self.bg_color)
+        self.background.set_alpha(int(256 * self.bg_alpha))
+        self.align_position()
+
+    def render(self):
+        self.game.screen.blit(self.background, self.pos_align)
+        self.game.screen.blit(self.front, self.pos_align)
+
+
+class ButtonGroup:
+    def __init__(
+        self, game: PyGame,
+        font_size: int = 30, pos: tuple = (0, 0),
+        text: str = "", align: str = "left-up",
+        left_img: str = "src/image/left_arrow.jpg",
+        right_img: str = "src/image/right_arrow.jpg",
+        default_value: int = 5, min_value: int = 1, max_value: int = 20
+    ):
+        self.game = game
+        self.font_size = font_size
+        self.pos = pos
+        self.text = text
+        self.num = default_value
+        self.min_value = min_value
+        self.max_value = max_value
+
+        self.text = TextButton(
+            game, text, pos,
+            align=align, font_size=font_size,
+            fr_color=color.Red
+        )
+        x, y, _x, _y = self.text.rect
+        self.left_rect = (x + _x, y, _x, _y)
+        self.left = Button(
+            game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y),
+            align=align, color=color.Red, image=left_img,
+            click_func=self.click_left
+        )
+        x, y, _x, _y = self.left.rect
+        self.num_text = TextButton(
+            game, str(self.num), pos=(x + _x + 0.5 * _y, y),
+            align=align, font_size=font_size,
+            fr_color=color.Red
+        )
+        x, y, _x, _y = self.num_text.rect
+        self.right = Button(
+            game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y),
+            align=align, color=color.Red, image=right_img,
+            click_func=self.click_right
+        )
+
+        self.button_list = [self.text, self.left, self.num_text, self.right]
+
+    def click_left(self):
+        if self.num > self.min_value:
+            self.num -= 1
+        self.num_text.change_text(str(self.num))
+
+    def click_right(self):
+        if self.num < self.max_value:
+            self.num += 1
+        self.num_text.change_text(str(self.num))
+
+    def render(self):
+        for button in self.button_list:
+            button.render()
+
+    def click_check(self, event: event.Event):
+        for button in self.button_list:
+            button.click_check(event)

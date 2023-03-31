@@ -98,7 +98,7 @@ def play_init(game: PyGame, state: StateMachine):
             Button(
                 game, size=(50, 10), pos=track_to_destination(game, i),
                 align="center",
-                bg_color=color.Red, click_func=key_press_func_list[i],
+                color=color.Red, click_func=key_press_func_list[i],
                 key=key_list[i], only_use_key=True
             )
         )
