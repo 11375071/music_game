@@ -21,7 +21,7 @@ class Page:
     def __init__(self,  game: PyGame, state: StateMachine) -> None:
         self.game = game
         self.state = state
-        self.__inited = False
+        self.inited = False
         self.__texture: list = []
         self.__bind: list = []
 
@@ -35,7 +35,8 @@ class Page:
         pass
 
     def show(self):
-        if not self.__inited:
+        if not self.inited:
+            print("init now")
             self.__init()
 
         for event in self.game.it.event.get():
@@ -53,8 +54,10 @@ class Page:
         self.game.clock.tick(60)
 
     def __init(self):
-        self.__inited = True
+        self.__texture.clear()
+        self.__bind.clear()
         self.init()
+        self.inited = True
 
     def del_render_list(self, __object: Any) -> Any:
         self.__texture.remove(__object)

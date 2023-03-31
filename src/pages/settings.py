@@ -26,25 +26,31 @@ class settings(Page):
         self.add_to_click_list(self.home_button)
 
 
+        def get_speed():
+            self.state["normal"]["speed"] = self.speed_ctrl.num
         self.speed_ctrl = ButtonGroup(
             self.game, pos=(100, 100),
-            text="speed: ", default_value=self.state["normal"]["speed"]
+            text="speed: ", default_value=self.state["normal"]["speed"],
+            click_func=get_speed
         )
         self.add_to_render_list(self.speed_ctrl)
         self.add_to_click_list(self.speed_ctrl)
 
 
+        def get_offset():
+            self.state["normal"]["offset"] = self.offset_ctrl.num
         self.offset_ctrl = ButtonGroup(
             self.game, pos=(100, 200),
             text="offset: ", default_value=self.state["normal"]["offset"],
-            min_value=-1000, max_value=1000
+            min_value=-1000, max_value=1000,
+            click_func=get_offset
         )
         self.add_to_render_list(self.offset_ctrl)
         self.add_to_click_list(self.offset_ctrl)
 
 
         def offset_guide():
-            # self.__inited = False
+            self.inited = False
             self.state.state = "offset_guide"
         self.offset_guide_button = TextButton(
             self.game, "offset guide", pos=(100, 250),
@@ -57,20 +63,20 @@ class settings(Page):
         self.add_to_click_list(self.offset_guide_button)
 
 
-        self.lv_ctrl = ButtonGroup(
+        def get_level():
+            self.state["normal"]["level"] = self.level_ctrl.num
+        self.level_ctrl = ButtonGroup(
             self.game, pos=(100, 350),
-            text="song lv: ", default_value=self.state["normal"]["level"],
-            min_value=1, max_value=6
+            text="song level: ", default_value=self.state["normal"]["level"],
+            min_value=1, max_value=6,
+            click_func=get_level
         )
-        self.add_to_render_list(self.lv_ctrl)
-        self.add_to_click_list(self.lv_ctrl)
+        self.add_to_render_list(self.level_ctrl)
+        self.add_to_click_list(self.level_ctrl)
 
 
     # overload controlflow
     def control_flow(self):
-        self.state["normal"]["speed"] = self.speed_ctrl.num
-        self.state["normal"]["offset"] = self.offset_ctrl.num
-        self.state["normal"]["level"] = self.lv_ctrl.num
         self.game.screen.fill(color.white)
 
 

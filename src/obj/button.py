@@ -220,7 +220,8 @@ class ButtonGroup:
         text: str = "", align: str = "left-up",
         left_img: str = "src/image/left_arrow.jpg",
         right_img: str = "src/image/right_arrow.jpg",
-        default_value: int = 5, min_value: int = 1, max_value: int = 20
+        default_value: int = 5, min_value: int = 1, max_value: int = 20,
+        click_func: Optional[Callable] = None,
     ):
         self.game = game
         self.font_size = font_size
@@ -229,6 +230,7 @@ class ButtonGroup:
         self.num = default_value
         self.min_value = min_value
         self.max_value = max_value
+        self.click_func = click_func
 
         self.text = TextButton(
             game, text, pos,
@@ -261,11 +263,13 @@ class ButtonGroup:
         if self.num > self.min_value:
             self.num -= 1
         self.num_text.change_text(str(self.num))
+        self.click_func()
 
     def click_right(self):
         if self.num < self.max_value:
             self.num += 1
         self.num_text.change_text(str(self.num))
+        self.click_func()
 
     def render(self):
         for button in self.button_list:
