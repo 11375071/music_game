@@ -41,21 +41,21 @@ def play_init(game: PyGame, state: StateMachine):
     home_button = TextButton(
         game, "return home", (game.size[0] - 10, game.size[1] - 10),
         align="right-down", font_size=30,
-        color=color.Red3, bg_alpha=0,
+        fr_color=color.Red3, bg_alpha=0,
         click_func=home
     )
 
     confirm_button = TextButton(
         game, "", (game.size[0] / 2, game.size[1] / 2),
         align="center", font_size=35,
-        color=color.Red3, bg_alpha=0.4,
+        fr_color=color.Red3, bg_alpha=0.4,
         click_func=confirm
     )
 
     offset_text = TextButton(
         game, pos=(50, 60),
         align="left-up", text="average offset: " + "%.2f"%(0),
-        font_size=30, color=color.Red, 
+        font_size=30, fr_color=color.Red, 
         bg_color=color.White, bg_alpha=0,
         click_func=None
     )
@@ -108,14 +108,14 @@ def play_init(game: PyGame, state: StateMachine):
                 align="center", font_size=10,
                 font_family="Arial",
                 text=key_list_text[i],
-                bg_alpha=0, color=color.White,
+                fr_color=color.White, bg_alpha=0,
             )
         )
     
     rank_text = TextButton(
         game, pos=(game.size[0] / 2, game.size[1] / 3 * 2 + 30),
         align="center", text="0",
-        font_size=30, color=color.Red, 
+        font_size=30, fr_color=color.Red, 
         bg_color=color.White, bg_alpha=0,
         click_func=None
     )

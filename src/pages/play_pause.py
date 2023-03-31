@@ -1,8 +1,8 @@
 from utils.define import PyGame, StateMachine
-from obj.button import Button, TextButton
+from obj.button import SimpleRect, TextButton
 import utils.color as color
 
-back_layer: Button = None
+back_layer: SimpleRect = None
 menu_button: TextButton = None
 replay_button: TextButton = None
 resume_button: TextButton = None
@@ -24,27 +24,27 @@ def play_pause_init(game: PyGame, state: StateMachine):
         game.it.mixer.music.unpause()
         state.sub_page = None
 
-    back_layer = Button(
+    back_layer = SimpleRect(
         game, (game.size[0] / 3 * 2, game.size[1] / 3 * 2),
         (game.size[0] / 2, game.size[1] / 2),
-        align="center", bg_alpha=0.85
+        align="center", alpha=0.85
     )
     resume_button = TextButton(
         game, "RESUME", (game.size[0] / 2, game.size[1] / 6 * 2),
         align="center", font_size=int(min(*game.size) / 15),
-        color=color.Blue2, bg_alpha=0,
+        fr_color=color.Blue2, bg_alpha=0,
         click_func=resume, key=game.it.K_SPACE
     )
     replay_button = TextButton(
         game, "REPLAY", (game.size[0] / 2, game.size[1] / 6 * 3),
         align="center", font_size=int(min(*game.size) / 15),
-        color=color.Blue2, bg_alpha=0,
+        fr_color=color.Blue2, bg_alpha=0,
         click_func=replay
     )
     menu_button = TextButton(
         game, "RETURN MENU", (game.size[0] / 2, game.size[1] / 6 * 4),
         align="center", font_size=int(min(*game.size) / 15),
-        color=color.Blue2, bg_alpha=0,
+        fr_color=color.Blue2, bg_alpha=0,
         click_func=menu
     )
 

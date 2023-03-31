@@ -8,29 +8,29 @@ class SimpleRect:
     def __init__(
         self, game: PyGame,
         size: tuple, pos: tuple, align: str = "center",
-        bg_color: tuple = color.PaleGreen2, bg_alpha: float = 1,
+        color: tuple = color.PaleGreen2, alpha: float = 1,
         image: Optional[str] = None,
     ) -> None:
         self.game = game
         self.size = size
         self.pos = pos
         self.align = align
-        self.bg_color = bg_color
-        self.bg_alpha = bg_alpha
+        self.color = color
+        self.alpha = alpha
         self.image = image
-        self.change_background()
+        self.change_image()
         self.align_position()
 
-    def change_background(self):
+    def change_image(self):
         if self.image is not None:
-            self.background = self.game.it.image.load(self.image)
-            self.background = self.game.it.transform.scale(
-                self.background, self.size
+            self.image = self.game.it.image.load(self.image)
+            self.image = self.game.it.transform.scale(
+                self.image, self.size
             )
         else:
-            self.background = self.game.it.Surface(self.size)
-            self.background.fill(self.bg_color)
-            self.background.set_alpha(int(256 * self.bg_alpha))
+            self.image = self.game.it.Surface(self.size)
+            self.image.fill(self.color)
+            self.image.set_alpha(int(256 * self.alpha))
 
     def align_position(self):
         if self.align == "center":
@@ -68,20 +68,20 @@ class SimpleRect:
         return self.rect.collidepoint(*pos)
 
     def render(self):
-        self.game.screen.blit(self.background, self.pos_align)
+        self.game.screen.blit(self.image, self.pos_align)
 
 
 class Button(SimpleRect):
     def __init__(
         self, game: PyGame,
         size: tuple, pos: tuple, align: str = "center",
-        bg_color: tuple = color.PaleGreen2, bg_alpha: float = 1,
+        color: tuple = color.PaleGreen2, alpha: float = 1,
         image: Optional[str] = None,
         click_func: Optional[Callable] = None,
         key: Optional[int] = None,
         only_use_key: bool = False,
     ):
-        super().__init__(game, size, pos, align, bg_color, bg_alpha, image)
+        super().__init__(game, size, pos, align, color, alpha, image)
         self.click_func = click_func
         self.key = key
         self.only_use_key = only_use_key
@@ -106,36 +106,36 @@ class TextButton(Button):
         game: PyGame,
         text: str, pos: tuple, align: str = "center",
         font_family: str = "consolas", font_size: int = 100,
-        color: tuple = color.PaleGreen2, bg_color: tuple = color.cyan,
-        alpha: float = 1, bg_alpha: float = 0,
+        fr_color: tuple = color.PaleGreen2, fr_alpha: float = 1,
+        bg_color: tuple = color.cyan, bg_alpha: float = 0,
         click_func: Optional[Callable] = None,
         key: Optional[int] = None,
         only_use_key: bool = False,
     ):
         self.game = game
+        self.text = text
         self.pos = pos
         self.align = align
+        self.font = self.game.it.font.SysFont(font_family, font_size)
+        self.fr_color = fr_color
+        self.fr_alpha = fr_alpha
         self.bg_color = bg_color
         self.bg_alpha = bg_alpha
         self.click_func = click_func
         self.key = key
         self.only_use_key = only_use_key
-        self.text = text
-        self.font = self.game.it.font.SysFont(font_family, font_size)
-        self.color = color
-        self.alpha = alpha
         self.change_text(text)
 
     def change_text(self, text):
         self.text = text
         self.text = self.font.render(
-            self.text, 1, [*self.color, self.alpha]
+            self.text, 1, [*self.fr_color, self.fr_alpha]
         )
         self.size = self.text.get_size()
-        self.surface = self.game.it.Surface(self.size).convert_alpha()
-        self.surface.fill([0, 0, 0, 0])
-        self.surface.set_alpha(int(256 * self.alpha))
-        self.surface.blit(self.text, (0, 0))
+        self.front = self.game.it.Surface(self.size).convert_alpha()
+        self.front.fill([0, 0, 0, 0])
+        self.front.set_alpha(int(256 * self.fr_alpha))
+        self.front.blit(self.text, (0, 0))
         self.background = self.game.it.Surface(self.size)
         self.background.fill(self.bg_color)
         self.background.set_alpha(int(256 * self.bg_alpha))
@@ -143,7 +143,7 @@ class TextButton(Button):
 
     def render(self):
         self.game.screen.blit(self.background, self.pos_align)
-        self.game.screen.blit(self.surface, self.pos_align)
+        self.game.screen.blit(self.front, self.pos_align)
 
 
 class RichRect:

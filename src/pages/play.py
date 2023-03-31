@@ -2,11 +2,11 @@ from typing import List
 from utils.define import PyGame, StateMachine
 from utils.load import load_music, load_note, track_to_destination, level_to_song_path
 import utils.color as color
-from obj.button import Button, TextButton
+from obj.button import SimpleRect, Button, TextButton
 from obj.note import Note
 from pages.play_pause import play_pause
 
-back_layer: Button = None
+back_layer: SimpleRect = None
 pause_button: TextButton = None
 rank_text: TextButton = None
 score_text: TextButton = None
@@ -90,15 +90,15 @@ def play_init(game: PyGame, state: StateMachine):
 
 
     # create button
-    back_layer = Button(
+    back_layer = SimpleRect(
         game, (game.size[0], game.size[1]), (0, 0),
-        bg_color=color.White, align="left-up", image="src/image/play_background.png"
+        color=color.White, align="left-up", image="src/image/play_background.png"
     )
 
     pause_button = TextButton(
         game, "PAUSE", (game.size[0] - 10, 10),
         align="right-up", font_size=int(min(*game.size) / 20),
-        color=color.Blue2, bg_alpha=0,
+        fr_color=color.Blue2, bg_alpha=0,
         click_func=pause, key=game.it.K_SPACE
     )
 
@@ -107,7 +107,7 @@ def play_init(game: PyGame, state: StateMachine):
             Button(
                 game, size=(50, 10), pos=track_to_destination(game, i),
                 align="center",
-                bg_color=color.Red, click_func=key_press_func_list[i],
+                color=color.Red, click_func=key_press_func_list[i],
                 key=key_list[i], only_use_key=True
             )
         )
@@ -116,14 +116,14 @@ def play_init(game: PyGame, state: StateMachine):
                 game, pos=track_to_destination(game, i),
                 align="center", font_size=15,
                 text=key_list_text[i],
-                bg_alpha=0, color=color.White,
+                fr_alpha=0, fr_color=color.White,
             )
         )
     
     rank_text = TextButton(
         game, pos=(game.size[0] / 2, game.size[1] / 3 * 2 + 30),
         align="center", text="",
-        font_size=30, color=color.Red, 
+        font_size=30, fr_color=color.Red, 
         bg_color=color.White, bg_alpha=0,
         click_func=None
     )
@@ -131,7 +131,7 @@ def play_init(game: PyGame, state: StateMachine):
     score_text = TextButton(
         game, pos=(50, 60),
         align="left-up", text="",
-        font_size=30, color=color.Red, 
+        font_size=30, fr_color=color.Red, 
         bg_color=color.White, bg_alpha=0,
         click_func=None
     )
@@ -139,7 +139,7 @@ def play_init(game: PyGame, state: StateMachine):
     percentage_text = TextButton(
         game, pos=(50, 100),
         align="left-up", text="",
-        font_size=30, color=color.Red, 
+        font_size=30, fr_color=color.Red, 
         bg_color=color.White, bg_alpha=0,
         click_func=None
     )

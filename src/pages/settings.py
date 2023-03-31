@@ -22,25 +22,25 @@ class setting_button_group:
         self.text = TextButton(
             game, text, pos,
             align=align, font_size=font_size,
-            color=color.Red
+            fr_color=color.Red
         )
         x, y, _x, _y = self.text.rect
         self.left_rect = (x + _x, y, _x, _y)
         self.left = Button(
             game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y),
-            align=align, bg_color=color.Red, image=r"src/image/left_arrow.jpg",
+            align=align, color=color.Red, image=r"src/image/left_arrow.jpg",
             click_func=self.click_left
         )
         x, y, _x, _y = self.left.rect
         self.num_text = TextButton(
             game, str(self.num), pos=(x + _x + 0.5 * _y, y),
             align=align, font_size=font_size,
-            color=color.Red
+            fr_color=color.Red
         )
         x, y, _x, _y = self.num_text.rect
         self.right = Button(
             game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y),
-            align=align, bg_color=color.Red, image=r"src/image/right_arrow.jpg",
+            align=align, color=color.Red, image=r"src/image/right_arrow.jpg",
             click_func=self.click_right
         )
 
@@ -75,10 +75,10 @@ class settings(Page):
         def home():
             self.state.state = "home"
         self.home_button = TextButton(
-            self.game, "return home", (self.game.size[0] -
-                                       10, self.game.size[1] - 10),
+            self.game, "return home",
+            (self.game.size[0] - 10, self.game.size[1] - 10),
             align="right-down", font_size=30,
-            color=color.Red3, bg_alpha=0,
+            fr_color=color.Red3, bg_alpha=0,
             click_func=home
         )
         self.add_to_render_list(self.home_button)
@@ -105,7 +105,7 @@ class settings(Page):
         self.offset_guide_button = TextButton(
             self.game, "offset guide", pos=(100, 250),
             align="left-up", font_size=30,
-            color=color.Blue3,
+            fr_color=color.Blue3,
             bg_alpha=0.4, bg_color=color.Yellow3,
             click_func=offset_guide
         )
