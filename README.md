@@ -25,7 +25,9 @@ python src/main.py  # to run
 
 ## TODO
 
-- 美化界面，降低读谱压力
-- 制作选曲界面
-- 制作评价结算界面
-- 学习 pygame.sprite，看看能否用来简化代码结构，比如不用写一大堆 xxxButton.render() 和 click_check() 语句
+- [ ] 美化界面，降低读谱压力
+- [ ] 完善选曲界面 menu
+- [ ] 制作评价结算界面
+- [x] 学习 pygame.sprite，看看能否用来简化代码结构，比如不用写一大堆 xxxButton.render() 和 click_check() 语句  
+      > 未使用 pygame.sprite，直接使用 page 类就可以实现
+- [ ] 将 play, play_pause, offset_guide 三个页面用 page 类简化
