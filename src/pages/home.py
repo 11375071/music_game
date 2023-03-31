@@ -1,102 +1,67 @@
+from utils.page import Page
+from obj.button import SimpleRect, RichButton
 from utils.define import PyGame, StateMachine
-import utils.color as color
-from obj.button import TextButton
-import matplotlib.image as mpimg
 
-home_inited: bool = False
-play_img, setting_img = None, None
-background, play_origin, play_selected, setting_origin, setting_selected = None, None, None, None, None
-play: bool = False
-setting: bool = False
 
-def home_init(game: PyGame, state: StateMachine):
-    
-    global home_inited, play_img, setting_img, \
-        background, play_origin, play_selected, setting_origin, setting_selected, \
-        play, setting
+class home(Page):
+    def __init__(self, game: PyGame, state: StateMachine) -> None:
+        super().__init__(game, state)
 
-    play_img = mpimg.imread("src/image/play_origin.png")
-    setting_img = mpimg.imread("src/image/setting_origin.png")
 
-    background = game.it.image.load("src/image/home_page.png")
-    background = game.it.transform.scale(
-        background, (game.size[0], game.size[1])
-    )
-    background.convert_alpha()
+    # overload init
+    def init(self):
+        
 
-    play_origin = game.it.image.load("src/image/play_origin.png")
-    play_origin = game.it.transform.scale(
-        play_origin, (game.size[0], game.size[1])
-    )
-    play_origin.convert_alpha()
+        self.background = SimpleRect(
+            self.game, (self.game.size[0], self.game.size[1]),
+            (0, 0), "left-up", image = "src/image/home_page.png"
+        )
+        self.add_to_render_list(self.background)
 
-    play_selected = game.it.image.load("src/image/play_selected.png")
-    play_selected = game.it.transform.scale(
-        play_selected, (game.size[0], game.size[1])
-    )   
-    play_selected.convert_alpha()
 
-    setting_origin = game.it.image.load("src/image/setting_origin.png")
-    setting_origin = game.it.transform.scale(
-        setting_origin, (game.size[0], game.size[1])
-    )
-    setting_origin.convert_alpha()
+        def menu():
+            self.state.state = "menu"
+        play_origin = SimpleRect(
+            self.game, (self.game.size[0], self.game.size[1]),
+            (0, 0), "left-up", image = "src/image/play_origin.png"
+        )
+        play_origin.change_click_rect((730, 90), (180, 150))
+        play_selected = SimpleRect(
+            self.game, (self.game.size[0], self.game.size[1]),
+            (0, 0), "left-up", image = "src/image/play_selected.png"
+        )
+        play_selected.change_click_rect((730, 90), (180, 150))
+        self.play_button = RichButton(
+            self.game,
+            play_origin, play_selected, None, menu
+        )
+        self.add_to_render_list(self.play_button)
+        self.add_to_click_list(self.play_button)
 
-    setting_selected = game.it.image.load("src/image/setting_selected.png")
-    setting_selected = game.it.transform.scale(
-        setting_selected, (game.size[0], game.size[1])
-    )
-    setting_selected.convert_alpha()
 
-    play = False
-    setting = False
-    home_inited = True
+        def settings():
+            self.state.state = "settings"
+        setting_origin = SimpleRect(
+            self.game, (self.game.size[0], self.game.size[1]),
+            (0, 0), "left-up", image = "src/image/setting_origin.png"
+        )
+        setting_origin.change_click_rect((780, 240), (100, 100))
+        setting_selected = SimpleRect(
+            self.game, (self.game.size[0], self.game.size[1]),
+            (0, 0), "left-up", image = "src/image/setting_selected.png"
+        )
+        setting_selected.change_click_rect((780, 240), (100, 100))
+        self.setting_button = RichButton(
+            self.game,
+            setting_origin, setting_selected, None, settings
+        )
+        self.add_to_render_list(self.setting_button)
+        self.add_to_click_list(self.setting_button)
 
-def check_image_click(x, y, img):
-    x, y = int(y / 500 * img.shape[0]), int(x / 1000 * img.shape[1])
-    return img[x][y][-1]
 
-def home(game: PyGame, state: StateMachine):
+    # overload controlflow
+    def control_flow(self):
+        pass
 
-    if not home_inited:
-        home_init(game, state)
 
-    global play, setting
-    # input
-    for event in game.it.event.get():
-        if event.type == game.it.QUIT:
-            state.quit = True
-        if event.type == game.it.MOUSEMOTION:
-            if check_image_click(event.pos[0], event.pos[1], play_img):
-                play = True
-            else:
-                play = False
-            if check_image_click(event.pos[0], event.pos[1], setting_img):
-                setting = True
-            else:
-                setting = False
-        if event.type == game.it.MOUSEBUTTONDOWN:
-            if play:
-                state.state = "play"
-            if setting:
-                state.state = "settings"
-
-    # control flow and calculate here
-    pass
-
-    # render
-
-    game.screen.blit(background, (0, 0))
-
-    if play:
-        game.screen.blit(play_selected, (0, 0))
-    else:
-        game.screen.blit(play_origin, (0, 0))
-
-    if setting:
-        game.screen.blit(setting_selected, (0, 0))
-    else:
-        game.screen.blit(setting_origin, (0, 0))
-
-    game.render_update()
-    game.clock.tick(60)
+    # DONE! These's nothing else need to do!

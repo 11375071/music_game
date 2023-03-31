@@ -1,6 +1,7 @@
 from utils.define import PyGame, StateMachine, StaticData
 from pages.home import home
 from pages.play import play
+from pages.menu import menu
 from pages.settings import settings
 from pages.offset_guide import offset_guide
 
@@ -20,16 +21,16 @@ def main_game():
     state["normal"].setdefault("offset", -40)
     state["normal"].setdefault("level", 1)
 
-    while not state.quit:
-        if state == "home":
-            home(game, state)
-        elif state == "play":
-            play(game, state)
-        elif state == "settings":
-            settings(game, state)
-        elif state == "offset_guide":
-            offset_guide(game, state)
+    home_page = home(game, state)
+    menu_page = menu(game, state)
+    settings_page = settings(game, state)
 
+    while not state.quit:
+        if state == "home": home_page.show()
+        elif state == "menu": menu_page.show()
+        elif state == "play": play(game, state)
+        elif state == "settings": settings_page.show()
+        elif state == "offset_guide": offset_guide(game, state)
     game.it.quit()
 
 
