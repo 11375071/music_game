@@ -15,6 +15,9 @@ class play(Page):
     # overload init
     def init(self):
         
+        self.score = 0
+        self.max_score = 0
+
         def track_to_destination(track: int):
             track = 3 - track
             return (self.game.size[0] / 2 - 100 * track + 150, self.game.size[1] / 5 * 4)
@@ -62,30 +65,34 @@ class play(Page):
                 if abs(note.time) < 0.044:
                     self.notes.remove(note)
                     self.resolved_notes.append(note)
-                    note.resolved()
                     note.rank("perfect")
                     self.rank_text.change_text("perfect")
+                    self.score += note.score
+                    self.max_score += note.max_score
                     return
                 elif abs(note.time) < 0.084:
                     self.notes.remove(note)
                     self.resolved_notes.append(note)
-                    note.resolved()
                     note.rank("great")
                     self.rank_text.change_text("great")
+                    self.score += note.score
+                    self.max_score += note.max_score
                     return
                 elif abs(note.time) < 0.118:
                     self.notes.remove(note)
                     self.resolved_notes.append(note)
-                    note.resolved()
                     note.rank("good")
                     self.rank_text.change_text("good")
+                    self.score += note.score
+                    self.max_score += note.max_score
                     return
                 elif note.time < 0.15:
                     self.notes.remove(note)
                     self.resolved_notes.append(note)
-                    note.resolved()
                     note.rank("miss")
                     self.rank_text.change_text("miss")
+                    self.score += note.score
+                    self.max_score += note.max_score
                     return
                 else:
                     return
@@ -148,26 +155,15 @@ class play(Page):
     def control_flow(self):
         self.duration =self.game.it.mixer.music.get_pos() + self.state["normal"]["offset"]
 
-        self.score = 0
-        self.max_score = 0
-
         for note in self.notes:
             note.time = note.init_time - self.duration * 0.001
             if note.time < -0.3:
                 self.notes.remove(note)
                 self.resolved_notes.append(note)
-                note.resolved()
                 note.rank("miss")
-                self.rank_text.chane_text("miss")
-        
-        for note in self.resolved_notes:
-            self.max_score += 1000
-            if note.rank_type == "perfect":
-                self.score += 1000
-            if note.rank_type == "great":
-                self.score += 750
-            if note.rank_type == "good":
-                self.score += 400
+                self.rank_text.change_text("miss")
+                self.score += note.score
+                self.max_score += note.max_score
 
         if self.max_score == 0:
             pct = 0

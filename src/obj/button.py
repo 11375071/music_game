@@ -13,6 +13,9 @@ class SimpleRect:
         image: Optional[str] = None,
         strip_alpha: bool = False,
     ) -> None:
+        """
+        strip_alpha: if is true, click will dismiss area where alpha == 1
+        """
         self.game = game
         self.size = size
         self.pos = pos
