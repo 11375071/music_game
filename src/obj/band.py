@@ -69,7 +69,6 @@ class ScrollArea(PositionProperty):
                 self.mouse_scroll_wait /= 1.2
             else:
                 self.mouse_scroll_wait = 0
-            print(self.mouse_scroll_wait)
 
         if self.mouse_pos is not None:
             vertical_partial = (self.mouse_pos[1] - self.pos[1]) / self.size[1]
