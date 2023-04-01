@@ -146,7 +146,7 @@ class offset_guide(SubPage):
         for note in self.notes:
             note.time = note.init_time - duration * 0.001
             note.appear = True
-            if note.time < -2.0:
+            if note.time < -0.5:
                 self.del_render_list(note)
                 self.notes.remove(note)
                 note.rank("miss")

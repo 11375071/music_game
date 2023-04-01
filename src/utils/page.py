@@ -26,6 +26,7 @@ class Page:
         self.daughters: List[SubPage] = []
         self._texture: list = []
         self._bind: list = []
+        self.frame = 0
 
     def init(self):
         pass
@@ -37,6 +38,8 @@ class Page:
         pass
 
     def show(self):
+
+        self.frame += 1
 
         self.in_daughter = False
         for i in self.daughters:
@@ -64,6 +67,9 @@ class Page:
         self.control_flow()
 
         self._render()
+
+        # if self.frame % 60 == 0:
+        #     print(self.frame, len(self._texture), len(self._bind))
 
         self.game.render_update()
         self.game.clock.tick(60)
