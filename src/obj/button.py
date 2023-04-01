@@ -100,28 +100,63 @@ class SimpleButton(SimpleRect):
         key: Optional[int] = None,
         only_use_key: bool = False,
         activate_on_keydown: bool = False,
+        long_update: bool = False,
     ):
         """
         only_use_key: if False, you can both use key or mouse; or you can only use key
         activate_on_keydown: if False, it will activate on keyup; or it will activate on keydown
+        long_update: activate many times if press for a long time
         """
         super().__init__(game, size, pos, align, color, alpha, image, strip_alpha)
         self.click_func = click_func
         self.key = key
         self.only_use_key = only_use_key
         self.activate_on_keydown = activate_on_keydown
+        self.long_update = long_update
+        self.long_press_frame = 0
+        self.long_press_max = 25
+        self.pressed = False
         self.__ready_to_click = False
         self.__ready_to_key = False
+
+    def control_check(self):
+        if self.click_func is not None:
+            if self.activate_on_keydown and self.long_update:
+                if self.pressed:
+                    self.long_press_frame += 1
+                else:
+                    self.long_press_max = 25
+                    self.long_press_frame = 0
+                if self.long_press_frame >= self.long_press_max:
+                    self.long_press_max = 10
+                    self.long_press_frame = 0
+                    self.click_func()
 
     def click_check(self, event: event.Event):
         if self.click_func is not None:
 
-            if self.activate_on_keydown:
+            if self.activate_on_keydown and not self.long_update:
                 if not self.only_use_key:
                     if event.type == self.game.it.MOUSEBUTTONDOWN:
                         pos = self.game.it.mouse.get_pos()
                         if self.collide(pos):
                             self.click_func()
+                if self.key is not None:
+                    if event.type == self.game.it.KEYDOWN:
+                        if event.key == self.key:
+                            self.click_func()
+
+            elif self.activate_on_keydown and self.long_update:
+                if not self.only_use_key:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        pos = self.game.it.mouse.get_pos()
+                        if self.collide(pos):
+                            self.pressed = True
+                            self.click_func()
+                        else:
+                            self.pressed = False
+                    elif event.type == self.game.it.MOUSEBUTTONUP:
+                        self.pressed = False
                 if self.key is not None:
                     if event.type == self.game.it.KEYDOWN:
                         if event.key == self.key:
@@ -206,10 +241,12 @@ class TextButton(TextRect):
         key: Optional[int] = None,
         only_use_key: bool = False,
         activate_on_keydown: bool = False,
+        long_update: bool = False,
     ):
         """
         only_use_key: if False, you can both use key or mouse; or you can only use key
         activate_on_keydown: if False, it will activate on keyup; or it will activate on keydown
+        long_update: activate many times if press for a long time
         """
         super().__init__(
             game, text, pos, align, font_family,
@@ -219,18 +256,51 @@ class TextButton(TextRect):
         self.key = key
         self.only_use_key = only_use_key
         self.activate_on_keydown = activate_on_keydown
+        self.long_update = long_update
+        self.long_press_frame = 0
+        self.long_press_max = 25
+        self.pressed = False
         self.__ready_to_click = False
         self.__ready_to_key = False
+
+    def control_check(self):
+        if self.click_func is not None:
+            if self.activate_on_keydown and self.long_update:
+                if self.pressed:
+                    self.long_press_frame += 1
+                else:
+                    self.long_press_max = 25
+                    self.long_press_frame = 0
+                if self.long_press_frame >= self.long_press_max:
+                    self.long_press_max = 10
+                    self.long_press_frame = 0
+                    self.click_func()
 
     def click_check(self, event: event.Event):
         if self.click_func is not None:
 
-            if self.activate_on_keydown:
+            if self.activate_on_keydown and not self.long_update:
                 if not self.only_use_key:
                     if event.type == self.game.it.MOUSEBUTTONDOWN:
                         pos = self.game.it.mouse.get_pos()
                         if self.collide(pos):
                             self.click_func()
+                if self.key is not None:
+                    if event.type == self.game.it.KEYDOWN:
+                        if event.key == self.key:
+                            self.click_func()
+
+            elif self.activate_on_keydown and self.long_update:
+                if not self.only_use_key:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        pos = self.game.it.mouse.get_pos()
+                        if self.collide(pos):
+                            self.pressed = True
+                            self.click_func()
+                        else:
+                            self.pressed = False
+                    elif event.type == self.game.it.MOUSEBUTTONUP:
+                        self.pressed = False
                 if self.key is not None:
                     if event.type == self.game.it.KEYDOWN:
                         if event.key == self.key:
@@ -324,31 +394,66 @@ class RichButton(RichRect):
         key: Optional[int] = None,
         only_use_key: bool = False,
         activate_on_keydown: bool = False,
+        long_update: bool = False,
     ):
         """
         collide_using_target: "self", "default", "hover", "click"
         only_use_key: if False, you can both use key or mouse; or you can only use key
         activate_on_keydown: if False, it will activate on keyup; or it will activate on keydown
+        long_update: activate many times if press for a long time
         """
         super().__init__(game, default_rect, hover_rect, click_rect, collide_using_target)
         self.click_func = click_func
         self.key = key
         self.only_use_key = only_use_key
         self.activate_on_keydown = activate_on_keydown
+        self.long_update = long_update
+        self.long_press_frame = 0
+        self.long_press_max = 25
+        self.pressed = False
         self.__ready_to_click = False
         self.__ready_to_key = False
+
+    def control_check(self):
+        if self.click_func is not None:
+            if self.activate_on_keydown and self.long_update:
+                if self.pressed:
+                    self.long_press_frame += 1
+                else:
+                    self.long_press_max = 25
+                    self.long_press_frame = 0
+                if self.long_press_frame >= self.long_press_max:
+                    self.long_press_max = 10
+                    self.long_press_frame = 0
+                    self.click_func()
 
     def click_check(self, event: event.Event):
         # don't forget this
         self.pre_click_check(event)
         if self.click_func is not None:
 
-            if self.activate_on_keydown:
+            if self.activate_on_keydown and not self.long_update:
                 if not self.only_use_key:
                     if event.type == self.game.it.MOUSEBUTTONDOWN:
                         pos = self.game.it.mouse.get_pos()
                         if self.collide(pos):
                             self.click_func()
+                if self.key is not None:
+                    if event.type == self.game.it.KEYDOWN:
+                        if event.key == self.key:
+                            self.click_func()
+
+            elif self.activate_on_keydown and self.long_update:
+                if not self.only_use_key:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        pos = self.game.it.mouse.get_pos()
+                        if self.collide(pos):
+                            self.pressed = True
+                            self.click_func()
+                        else:
+                            self.pressed = False
+                    elif event.type == self.game.it.MOUSEBUTTONUP:
+                        self.pressed = False
                 if self.key is not None:
                     if event.type == self.game.it.KEYDOWN:
                         if event.key == self.key:
@@ -412,7 +517,8 @@ class ButtonAjustGroup:
         self.left = SimpleButton(
             game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y),
             align=align, color=color.Red, image=left_img,
-            click_func=self.click_left
+            click_func=self.click_left, activate_on_keydown=True,
+            long_update=True
         )
         x, y, _x, _y = self.left.rect
         self.num_text = TextRect(
@@ -424,7 +530,8 @@ class ButtonAjustGroup:
         self.right = SimpleButton(
             game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y),
             align=align, color=color.Red, image=right_img,
-            click_func=self.click_right
+            click_func=self.click_right, activate_on_keydown=True,
+            long_update=True
         )
 
         self.render_list = [self.text, self.left, self.num_text, self.right]
@@ -445,6 +552,10 @@ class ButtonAjustGroup:
     def render(self):
         for texture in self.render_list:
             texture.render()
+
+    def control_check(self):
+        for button in self.button_list:
+            button.control_check()
 
     def click_check(self, event: event.Event):
         for button in self.button_list:

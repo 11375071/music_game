@@ -5,7 +5,7 @@ from utils.page import Page
 from pages.play_pause import play_pause
 from utils.define import PyGame, StateMachine
 from utils.load import load_music, load_note, level_to_song_path
-from obj.button import SimpleRect, SimpleButton, TextRect, TextButton
+from obj.button import SimpleRect, SimpleButton, TextRect, TextButton, RichButton
 
 
 class play(Page):
@@ -100,13 +100,22 @@ class play(Page):
         key_list = [self.game.it.K_z, self.game.it.K_x, self.game.it.K_PERIOD, self.game.it.K_SLASH]
         key_list_text = ['z', 'x', '.', '/']
         for i in range(4):
-            play_button = SimpleButton(
+            play_button_d = SimpleRect(
                 self.game, size=(50, 10), pos=track_to_destination(i),
                 align="center",
-                color=color.Red,
+                color=color.IndianRed1,
+            )
+            play_button_h = SimpleRect(
+                self.game, size=(50, 10), pos=track_to_destination(i),
+                align="center",
+                color=color.Green3,
+            )
+            play_button = RichButton(
+                self.game,
+                play_button_d, play_button_h, None,
                 # if not add a lambda scope, all function will be the same as the last function
                 click_func=(lambda x: lambda: key_press(track_to_destination(x)))(i),
-                key=key_list[i], only_use_key=True, activate_on_keydown=True
+                key=key_list[i], only_use_key=True, activate_on_keydown=True,
             )
             self.add_to_click_list(play_button)
             self.add_to_render_list(play_button)

@@ -15,6 +15,7 @@ class settings(Page):
     def init(self):
 
         def home():
+            self.inited = False
             self.state.state = "home"
         self.home_button = TextButton(
             self.game, "return home",

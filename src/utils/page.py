@@ -57,6 +57,9 @@ class Page:
             for i in self._bind:
                 i.click_check(event)
             self.event_deal(event)
+        
+        for i in self._bind:
+            i.control_check()
 
         self.control_flow()
 
