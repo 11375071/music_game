@@ -115,3 +115,14 @@ class ScrollArea(PositionProperty):
         elif event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 5:
             self.now_index += 0.6
             self.mouse_scroll_wait = 0.08
+        
+        if self.len >= 3:
+            while self.now_index < 0:
+                self.now_index += self.len
+            while self.now_index > self.len - 1:
+                self.now_index -= self.len
+        else:
+            if self.now_index < 0:
+                self.now_index = 0
+            elif self.now_index > self.len - 1:
+                self.now_index = self.len - 1
