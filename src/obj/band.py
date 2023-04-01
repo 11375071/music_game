@@ -86,19 +86,20 @@ class ScrollArea(PositionProperty):
             else:
                 self.now_index += (vertical_partial - 0.72) / 5 + 0.05
             
-            if self.len >= 3:
-                while self.now_index < 0:
-                    self.now_index += self.len
-                while self.now_index > self.len - 1:
-                    self.now_index -= self.len
-            else:
-                if self.now_index < 0:
-                    self.now_index = 0
-                elif self.now_index > self.len - 1:
-                    self.now_index = self.len - 1
         else:
             if abs(self.now_index - round(self.now_index)) > 0.0001:
                 self.now_index -= (self.now_index - round(self.now_index)) * 0.4
+        
+        if self.len >= 3:
+            while self.now_index < 0:
+                self.now_index += self.len
+            while self.now_index > self.len - 1:
+                self.now_index -= self.len
+        else:
+            if self.now_index < 0:
+                self.now_index = 0
+            elif self.now_index > self.len - 1:
+                self.now_index = self.len - 1
 
     def event_check(self, event):
 
