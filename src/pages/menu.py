@@ -15,7 +15,7 @@ class menu(Page):
     def init(self):
 
         def choose_song(song: songs.Song):
-            print(song.song_name)
+            # print(song.song_name)
             self.state.song = song
             self.state.state = "play"
         menu_scroll_area = ScrollArea(
