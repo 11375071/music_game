@@ -70,6 +70,9 @@ class Page:
 
         # if self.frame % 60 == 0:
         #     print(self.frame, len(self._texture), len(self._bind))
+        
+        if self.frame >= 5184000:
+            self.frame = 0
 
         self.game.render_update()
         self.game.clock.tick(60)
