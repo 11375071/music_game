@@ -42,7 +42,7 @@ class play(Page):
             self.add_to_render_list(note)
 
 
-        self.pause_page = play_pause(self.game, self.state, self)
+        self.pause_page = play_pause(self.game, self.state, self, True)
         def pause():
             self.game.it.mixer.music.pause()
             self.pause_page.enter()

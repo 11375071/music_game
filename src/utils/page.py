@@ -111,13 +111,18 @@ class SubPage(Page):
       rebind_mother_page()
     """
 
-    def __init__(self, game: PyGame, state: StateMachine, mother_page: Page) -> None:
+    def __init__(
+            self, game: PyGame,
+            state: StateMachine, mother_page: Page,
+            need_mother_texture: bool = False,
+        ) -> None:
         super().__init__(game, state)
         self.mother_page = mother_page
         mother_page.daughters.append(self)
         self._ready = False
+        self.need_mother_texture = need_mother_texture
         self._del_mother_texture = []
-    
+
     def rebind_mother_page(self, mother_page: Page):
         self.mother_page = mother_page
     
@@ -131,8 +136,9 @@ class SubPage(Page):
         self._ready = False
 
     def _render(self):
-        for i in self.mother_page._texture:
-            if i not in self._del_mother_texture:
-                i.render()
+        if self.need_mother_texture:
+            for i in self.mother_page._texture:
+                if i not in self._del_mother_texture:
+                    i.render()
         for i in self._texture:
             i.render()
