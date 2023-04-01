@@ -22,6 +22,7 @@ class ScrollArea(PositionProperty):
         self.now_index: float = 0
         self.len = 1
         self.selected: SimpleButton = None
+        self.mouse_scroll_wait: float = 0
         self.align_position()
     
     def collide(self, pos: tuple):
@@ -62,6 +63,14 @@ class ScrollArea(PositionProperty):
 
     def control_check(self):
 
+        if self.mouse_scroll_wait != 0:
+            self.now_index += self.mouse_scroll_wait
+            if abs(self.mouse_scroll_wait) > 0.01:
+                self.mouse_scroll_wait /= 1.2
+            else:
+                self.mouse_scroll_wait = 0
+            print(self.mouse_scroll_wait)
+
         if self.mouse_pos is not None:
             vertical_partial = (self.mouse_pos[1] - self.pos[1]) / self.size[1]
             if vertical_partial < 0.25:
@@ -90,4 +99,9 @@ class ScrollArea(PositionProperty):
         self.mouse_pos = self.game.it.mouse.get_pos()
         if not self.collide(self.mouse_pos):
             self.mouse_pos = None
-    
+        if event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 4:
+            self.now_index -= 0.6
+            self.mouse_scroll_wait = -0.08
+        elif event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 5:
+            self.now_index += 0.6
+            self.mouse_scroll_wait = 0.08

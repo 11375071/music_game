@@ -58,13 +58,13 @@ class ClickCheckProperty:
 
             if self.activate_on_keydown:
                 if not self.only_use_key:
-                    if event.type == self.game.it.MOUSEBUTTONDOWN:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 1:
                         if self.collide(pos):
                             self.now_press_state = "click"
                             self.click_func()
                         else:
                             self.now_press_state = "default"
-                    elif event.type == self.game.it.MOUSEBUTTONUP:
+                    elif event.type == self.game.it.MOUSEBUTTONUP and event.button == 1:
                         self.now_press_state = "default"
                 if self.key is not None:
                     if event.type == self.game.it.KEYDOWN and event.key == self.key:
@@ -75,14 +75,14 @@ class ClickCheckProperty:
 
             else:  # activate_on_keyup
                 if not self.only_use_key:
-                    if event.type == self.game.it.MOUSEBUTTONDOWN:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 1:
                         if self.collide(pos):
                             self.now_press_state = "click"
                             self._ready_to_click = True
                         else:
                             self.now_press_state = "default"
                             self._ready_to_click = False
-                    if event.type == self.game.it.MOUSEBUTTONUP:
+                    if event.type == self.game.it.MOUSEBUTTONUP and event.button == 1:
                         if self.collide(pos):
                             self.now_press_state = "default"
                             if self._ready_to_click:
