@@ -48,6 +48,8 @@ class ClickCheckProperty:
 
     def event_check(self, event: event.Event):
 
+        activated = False
+
         if not self.only_use_key:
             # avoid get pos for 2 times
             pos = self.pre_event_check(event)
@@ -62,6 +64,7 @@ class ClickCheckProperty:
                         if self.collide(pos):
                             self.now_press_state = "click"
                             self.click_func()
+                            activated = True
                         else:
                             self.now_press_state = "default"
                     elif event.type == self.game.it.MOUSEBUTTONUP and event.button == 1:
@@ -70,6 +73,7 @@ class ClickCheckProperty:
                     if event.type == self.game.it.KEYDOWN and event.key == self.key:
                         self.now_press_state = "click"
                         self.click_func()
+                        activated = True
                     if event.type == self.game.it.KEYUP and event.key == self.key:
                         self.now_press_state = "default"
 
@@ -88,6 +92,7 @@ class ClickCheckProperty:
                             if self._ready_to_click:
                                 self._ready_to_click = False
                                 self.click_func()
+                                activated = True
                 if self.key is not None:
                     if event.type == self.game.it.KEYDOWN:
                         if event.key == self.key:
@@ -102,8 +107,11 @@ class ClickCheckProperty:
                             if self._ready_to_key:
                                 self._ready_to_key = False
                                 self.click_func()
+                                activated = True
+        return activated
 
     def control_check(self):
+        activated = False
         if self.click_func is not None:
             if self.activate_on_keydown and self.long_update:
                 if self.now_press_state == "click":
@@ -115,7 +123,8 @@ class ClickCheckProperty:
                     self.long_press_max = 5
                     self.long_press_frame = 0
                     self.click_func()
-
+                    activated = True
+        return activated
 
 class ImageProperty:
     """
@@ -175,7 +184,7 @@ class ImageProperty:
 class PositionProperty:
     """
     `align_position()`, `change_position(pos, size)`
-    required property: game, size, pos, align
+    required property: image, game, size, pos, align, (normal_image just set to None)
     """
     
     def __init__(self) -> None:
@@ -187,6 +196,8 @@ class PositionProperty:
         self.size: tuple = None
         self.pos: tuple = None
         self.align: str = None
+        self.image: Surface = None
+        self.normal_image: Optional[Surface] = None
         assert(False, "you cannot init PositionProperty")
 
     def align_position(self):
@@ -221,5 +232,8 @@ class PositionProperty:
         return pos_align, size
     
     def resize(self, pos: tuple, size: tuple):
+        if self.normal_image is None:
+            self.normal_image = self.image.copy()
+        self.image = self.game.it.transform.scale(self.normal_image, size)
         self.pos = pos
         self.pos_align, self.size = self.change_position(pos, size)

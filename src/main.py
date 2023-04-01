@@ -19,7 +19,6 @@ def main_game():
 
     state["normal"].setdefault("speed", 10)
     state["normal"].setdefault("offset", -40)
-    state["normal"].setdefault("level", 1)
 
     home_page = home(game, state)
     menu_page = menu(game, state)

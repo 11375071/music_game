@@ -3,7 +3,7 @@ from numpy import ndarray
 import utils.color as color
 from utils.define import PyGame
 from pygame.surface import Surface
-from typing import Callable, Optional, Union, Tuple
+from typing import Callable, Optional, Union, Tuple, List, Any
 from obj.property import ClickCheckProperty, PositionProperty, ImageProperty
 
 
@@ -27,6 +27,7 @@ class SimpleRect(PositionProperty, ImageProperty):
         self.image = image
         self.strip_alpha = strip_alpha
 
+        self.normal_image: Optional[Surface] = None
         self.scaled: bool = False
         self.rect: Optional[Surface] = None
         self.load_image: Optional[ndarray] = None
@@ -99,6 +100,8 @@ class TextRect(PositionProperty):
         self.fr_alpha = fr_alpha
         self.bg_color = bg_color
         self.bg_alpha = bg_alpha
+
+        self.normal_image: Optional[Surface] = None
         self.change_text(self.text)
 
     def change_text(self, text):
@@ -157,6 +160,46 @@ class TextButton(TextRect, ClickCheckProperty):
         self.long_press_max: int = 25
         self._ready_to_click: bool = False
         self._ready_to_key: bool = False
+
+
+class MultipleTextButton(SimpleButton):
+    def __init__(
+        self, game: PyGame,
+        size: tuple, pos: tuple, align: str = "center",
+        color: tuple = color.PaleGreen2, alpha: float = 1,
+        image: Optional[Union[str, Surface, Tuple[Surface, ndarray]]] = None,
+        strip_alpha: bool = False,
+        click_func: Optional[Callable] = None,
+        key: Optional[int] = None,
+        only_use_key: bool = False,
+        activate_on_keydown: bool = False,
+        long_update: bool = False
+    ):
+        """
+        only_use_key: if False, you can both use key or mouse; otherwise you can only use key
+        activate_on_keydown: if False, it will activate on keyup; otherwise it will activate on keydown
+        long_update: activate many times if press for a long time (only worked when activate_on_keydown is enabled)
+        """
+        super().__init__(
+            game, size, pos, align,
+            color, alpha, image, strip_alpha,
+            click_func, key, only_use_key,
+            activate_on_keydown, long_update
+        )
+        self.property_dict = {}
+    
+    def __setitem__(self, name: str, data: Any):
+        self.property_dict[name] = data
+
+    def __getitem__(self, name: str) -> Any:
+        return self.property_dict[name]
+
+    def append_text(self, object: TextRect):
+        """
+        object is relative position
+        """
+        self.image.blit(object.background, object.pos_align)
+        self.image.blit(object.front, object.pos_align)
 
 
 class RichRect:

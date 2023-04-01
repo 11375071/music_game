@@ -74,17 +74,3 @@ def load_note(game: PyGame, note_path: str, dest_func: Callable):
         f.close()
 
     return notes
-
-def level_to_song_path(lv):
-    if lv == 1:
-        return r"src/songs/Lv.1/vacuum/Mujinku-Vacuum Track#ADD8E6-.ogg", r"src/songs/Lv.1/vacuum/Mujinku-Vacuum Track#ADD8E6- (4K Beginner).mc"
-    if lv == 2:
-        return r"src/songs/Lv.2/sterelogue/VeetaCrush - Sterelogue.ogg", r"src/songs/Lv.2/sterelogue/Sterelogue (4ky_normal).mc"
-    if lv == 3:
-        return r"src/songs/Lv.3/bad apple/Bad Apple!! feat. nomico.ogg", r"src/songs/Lv.3/bad apple/1594123299.mc"
-    if lv == 4:
-        return r"src/songs/Lv.4/white/Nitta Emi - White Eternity.ogg", r"src/songs/Lv.4/white/Various Artists - Malody 4K Regular Dan v3-Starter(1).mc"
-    if lv == 5:
-        return r"src/songs/Lv.5/king/Tsunomaki Watame - KING.ogg", r"src/songs/Lv.5/king/Various Artists - Malody 4K Regular Dan v3-Starter (Reg-1 Map-4).mc"
-    if lv == 6:
-        return r"src/songs/Lv.6/stargazer/Lime - Stargazer.ogg", r"src/songs/Lv.6/stargazer/Various Artists - Malody 4K Regular Dan v3-Starter (Reg-2 Map-1).mc"

@@ -66,16 +66,16 @@ class settings(Page):
         self.add_to_click_list(self.offset_guide_button)
 
 
-        def get_level():
-            self.state["normal"]["level"] = self.level_ctrl.num
-        self.level_ctrl = ButtonAjustGroup(
+        def get_TBD():
+            self.state["normal"]["TBD"] = self.TBD_ctrl.num
+        self.TBD_ctrl = ButtonAjustGroup(
             self.game, pos=(100, 350),
-            text="song level: ", default_value=self.state["normal"]["level"],
-            min_value=1, max_value=6,
-            click_func=get_level
+            text="TBD: ", default_value=self.state["normal"]["TBD"],
+            min_value=-1000, max_value=1000,
+            click_func=get_TBD
         )
-        self.add_to_render_list(self.level_ctrl)
-        self.add_to_click_list(self.level_ctrl)
+        self.add_to_render_list(self.TBD_ctrl)
+        self.add_to_click_list(self.TBD_ctrl)
 
 
     # overload controlflow

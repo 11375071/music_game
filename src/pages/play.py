@@ -5,7 +5,7 @@ import utils.color as color
 from utils.page import Page
 from pages.play_pause import play_pause
 from utils.define import PyGame, StateMachine
-from utils.load import load_music, load_note, level_to_song_path
+from utils.load import load_music, load_note
 from obj.button import SimpleRect, SimpleButton, TextRect, TextButton, RichButton
 
 
@@ -35,7 +35,7 @@ class play(Page):
         self.resolved_notes: List[Note] = []
         self.notes = load_note(
             self.game,
-            level_to_song_path(self.state["normal"]["level"])[1],
+            self.state.song.note_path,
             track_to_destination
         )
         for note in self.notes:
@@ -162,7 +162,7 @@ class play(Page):
         self.add_to_render_list(self.percentage_text)
 
 
-        load_music(self.game, level_to_song_path(self.state["normal"]["level"])[0])
+        load_music(self.game, self.state.song.song_path)
 
 
     # overload controlflow

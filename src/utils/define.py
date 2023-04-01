@@ -1,6 +1,7 @@
 import os
 import yaml
 import pygame
+from preload.songs import Song
 from yaml.loader import SafeLoader
 from typing import Callable, Optional, Dict, Any
 
@@ -44,7 +45,7 @@ class StaticData:
         self.dict[key] = value
         self.save()
 
-    def setdefault(self, key: str, default = None):
+    def setdefault(self, key: str, default = 0):
         res = self.dict.setdefault(key, default)
         self.save()
         return res
@@ -73,6 +74,7 @@ class StateMachine:
     def __init__(self, init_state: str) -> None:
         self.state: str = init_state
         self.quit: bool = False
+        self.song: Song = None
         self.__data_dict: Dict[str, StaticData] = {}
 
     def __setitem__(self, name: str, data: StaticData):

@@ -18,6 +18,7 @@ class ScrollArea(PositionProperty):
         self.align = align
 
         self.choices_list: List[SimpleButton] = []
+        self.render_list: List[Tuple[SimpleButton, float]] = []
         self.mouse_pos: tuple = None
         self.now_index: float = 0
         self.len = 1
@@ -34,7 +35,7 @@ class ScrollArea(PositionProperty):
 
     def render(self):
         index = 0
-        render_list: List[Tuple[SimpleButton, float]] = []
+        self.render_list.clear()
 
         for i in self.choices_list:
             if abs(index - self.now_index) > abs(index - self.now_index + self.len):
@@ -52,16 +53,21 @@ class ScrollArea(PositionProperty):
             def insert_sorted(my_list, element):
                 my_list.insert(bisect.bisect_left([i[1] for i in my_list], element[1]), element)
             new_element = (i, abs(difference))
-            insert_sorted(render_list, new_element)
+            insert_sorted(self.render_list, new_element)
 
             index += 1
         
-        self.selected = render_list[0]
-        render_list.reverse()
-        for i in render_list:
+        self.selected = self.render_list[0]
+        self.render_list.reverse()
+        for i in self.render_list:
             i[0].render()
+        self.render_list.reverse()
 
     def control_check(self):
+
+        for i in self.render_list:
+            if i[0].control_check():
+                break  # do not activate the covered button
 
         if self.mouse_scroll_wait != 0:
             self.now_index += self.mouse_scroll_wait
@@ -95,6 +101,11 @@ class ScrollArea(PositionProperty):
                 self.now_index -= (self.now_index - round(self.now_index)) * 0.4
 
     def event_check(self, event):
+
+        for i in self.render_list:
+            if i[0].event_check(event):
+                break  # do not activate the covered button
+
         self.mouse_pos = self.game.it.mouse.get_pos()
         if not self.collide(self.mouse_pos):
             self.mouse_pos = None
