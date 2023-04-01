@@ -24,11 +24,12 @@ def main_game():
     home_page = home(game, state)
     menu_page = menu(game, state)
     settings_page = settings(game, state)
+    play_page = play(game, state)
 
     while not state.quit:
         if state == "home": home_page.show()
         elif state == "menu": menu_page.show()
-        elif state == "play": play(game, state)
+        elif state == "play": play_page.show()
         elif state == "settings": settings_page.show()
         elif state == "offset_guide": offset_guide(game, state)
     game.it.quit()

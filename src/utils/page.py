@@ -9,7 +9,7 @@ class Page:
     inherit this.
 
     you may need to overload:
-      init(), event_deal(event), control_flow()
+      init(), state_machine(), event_deal(event), control_flow()
 
     you may need to use inside:
       add_to_xxx(), del_xxx()
@@ -22,10 +22,14 @@ class Page:
         self.game = game
         self.state = state
         self.inited = False
+        self.stop = False
         self.__texture: list = []
         self.__bind: list = []
 
     def init(self):
+        pass
+
+    def state_machine(self):
         pass
 
     def event_deal(self, event: event.Event):
@@ -37,6 +41,11 @@ class Page:
     def show(self):
         if not self.inited:
             self.__init()
+
+        self.state_machine()
+
+        if self.stop:
+            return
 
         for event in self.game.it.event.get():
             if event.type == self.game.it.QUIT:

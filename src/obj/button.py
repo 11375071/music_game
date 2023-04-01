@@ -111,11 +111,11 @@ class SimpleButton(SimpleRect):
 
     def click_check(self, event: event.Event):
         if self.click_func is not None:
-            pos = self.game.it.mouse.get_pos()
 
             if self.activate_on_keydown:
                 if not self.only_use_key:
                     if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        pos = self.game.it.mouse.get_pos()
                         if self.collide(pos):
                             self.click_func()
                 if self.key is not None:
@@ -126,11 +126,13 @@ class SimpleButton(SimpleRect):
             else:  # activate_on_keyup
                 if not self.only_use_key:
                     if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        pos = self.game.it.mouse.get_pos()
                         if self.collide(pos):
                             self.__ready_to_click = True
                         else:
                             self.__ready_to_click = False
                     if event.type == self.game.it.MOUSEBUTTONUP:
+                        pos = self.game.it.mouse.get_pos()
                         if self.collide(pos) and self.__ready_to_click:
                             self.__ready_to_click = False
                             self.click_func()
@@ -218,11 +220,11 @@ class TextButton(TextRect):
 
     def click_check(self, event: event.Event):
         if self.click_func is not None:
-            pos = self.game.it.mouse.get_pos()
 
             if self.activate_on_keydown:
                 if not self.only_use_key:
                     if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        pos = self.game.it.mouse.get_pos()
                         if self.collide(pos):
                             self.click_func()
                 if self.key is not None:
@@ -233,11 +235,13 @@ class TextButton(TextRect):
             else:  # activate_on_keyup
                 if not self.only_use_key:
                     if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        pos = self.game.it.mouse.get_pos()
                         if self.collide(pos):
                             self.__ready_to_click = True
                         else:
                             self.__ready_to_click = False
                     if event.type == self.game.it.MOUSEBUTTONUP:
+                        pos = self.game.it.mouse.get_pos()
                         if self.collide(pos) and self.__ready_to_click:
                             self.__ready_to_click = False
                             self.click_func()
@@ -334,11 +338,11 @@ class RichButton(RichRect):
         # don't forget this
         self.pre_click_check(event)
         if self.click_func is not None:
-            pos = self.game.it.mouse.get_pos()
 
             if self.activate_on_keydown:
                 if not self.only_use_key:
                     if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        pos = self.game.it.mouse.get_pos()
                         if self.collide(pos):
                             self.click_func()
                 if self.key is not None:
@@ -349,11 +353,13 @@ class RichButton(RichRect):
             else:  # activate_on_keyup
                 if not self.only_use_key:
                     if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        pos = self.game.it.mouse.get_pos()
                         if self.collide(pos):
                             self.__ready_to_click = True
                         else:
                             self.__ready_to_click = False
                     if event.type == self.game.it.MOUSEBUTTONUP:
+                        pos = self.game.it.mouse.get_pos()
                         if self.collide(pos) and self.__ready_to_click:
                             self.__ready_to_click = False
                             self.click_func()

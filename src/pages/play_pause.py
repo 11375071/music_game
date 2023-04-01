@@ -67,7 +67,7 @@ def play_pause(game: PyGame, state: StateMachine):
     # render
     # 不加 mother 的话就没法透明了（透明似乎基于前面 render 的计算）
     # 同时这里使用 specify 是因为这一步之前 state.state 可能已经变成 menu 了
-    state.specify_mother_render("play")(for_pause = True)
+    # state.specify_mother_render("play")(for_pause = True)
     back_layer.render()
     resume_button.render()
     replay_button.render()

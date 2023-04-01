@@ -1,17 +1,14 @@
 from utils.define import PyGame, StateMachine
 from obj.note import Note
 import utils.color as color
-
-def track_to_destination(game: PyGame, track: int):
-    track = 3 - track
-    return (game.size[0] / 2 - 100 * track + 150, game.size[1] / 5 * 4)
+from typing import Callable
 
 def load_music(game: PyGame, music_path: str):
     game.it.mixer.music.load(music_path)
     game.it.mixer.music.set_volume(0.15)
     game.it.mixer.music.play()
 
-def load_note_from_txt(game: PyGame, note_path: str):
+def load_note_from_txt(game: PyGame, note_path: str, dest_func: Callable):
     cnt: int = 0
     notes: list = []
     f = open(note_path, 'r')
@@ -34,7 +31,7 @@ def load_note_from_txt(game: PyGame, note_path: str):
                 for t in line:
                     new_note = Note(
                         game, init_time=float(t) / bpm * 60 - 0.001 * offset, color=color.Blue,
-                        destination=track_to_destination(game, track)
+                        destination=dest_func(track)
                     )
                     notes.append(new_note)
             else:
@@ -44,7 +41,7 @@ def load_note_from_txt(game: PyGame, note_path: str):
 
     return notes
 
-def load_note(game: PyGame, note_path: str):
+def load_note(game: PyGame, note_path: str, dest_func: Callable):
     bpm: float = 0
     notes: list = []
     f = open(note_path, 'r')
@@ -68,7 +65,7 @@ def load_note(game: PyGame, note_path: str):
                         t = i['beat'][0] + i['beat'][1] / i['beat'][2]
                         new_note = Note(
                             game, init_time= t / bpm * 60 - 0.001 * offset, color=color.Blue,
-                            destination=track_to_destination(game, i['column'])
+                            destination=dest_func(i['column'])
                         )
                         notes.append(new_note)
             else:

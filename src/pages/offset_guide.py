@@ -1,6 +1,6 @@
 from typing import List
 from utils.define import PyGame, StateMachine
-from utils.load import load_music, load_note_from_txt, track_to_destination
+from utils.load import load_music, load_note_from_txt
 import utils.color as color
 from obj.button import SimpleButton, TextButton
 from obj.note import Note
@@ -19,6 +19,10 @@ offset_list: List[int] = []
 # todo: add an appear_notes list to only record the notes on screen
 
 def play_init(game: PyGame, state: StateMachine):
+
+    def track_to_destination(track: int):
+        track = 3 - track
+        return (game.size[0] / 2 - 100 * track + 150, game.size[1] / 5 * 4)
 
     global home_button, confirm_button, rank_text, offset_text, \
         play_button_list, play_inited, notes
@@ -74,20 +78,20 @@ def play_init(game: PyGame, state: StateMachine):
                 return
             
     def key_press_0():
-        return key_press(track_to_destination(game, 0))
+        return key_press(track_to_destination(0))
     def key_press_1():
-        return key_press(track_to_destination(game, 1))
+        return key_press(track_to_destination(1))
     def key_press_2():
-        return key_press(track_to_destination(game, 2))
+        return key_press(track_to_destination(2))
     def key_press_3():
-        return key_press(track_to_destination(game, 3))
+        return key_press(track_to_destination(3))
     key_press_func_list = [key_press_0, key_press_1, key_press_2, key_press_3]
     key_list = [game.it.K_z, game.it.K_x, game.it.K_PERIOD, game.it.K_SLASH]
     key_list_text = ['z', 'x', '.', '/']
 
     # clear and create notes
     notes = []
-    notes = load_note_from_txt(game, r"src/songs/Lv.0/offset_guide/offset_guide.txt")
+    notes = load_note_from_txt(game, r"src/songs/Lv.0/offset_guide/offset_guide.txt", track_to_destination)
     for note in notes:
         note.speed = state["normal"]["speed"]
 
@@ -96,7 +100,7 @@ def play_init(game: PyGame, state: StateMachine):
     for i in range(4):
         play_button_list.append(
             SimpleButton(
-                game, size=(50, 10), pos=track_to_destination(game, i),
+                game, size=(50, 10), pos=track_to_destination(i),
                 align="center",
                 color=color.Red, click_func=key_press_func_list[i],
                 key=key_list[i], only_use_key=True
@@ -104,7 +108,7 @@ def play_init(game: PyGame, state: StateMachine):
         )
         play_button_list.append(
             TextButton(
-                game, pos=track_to_destination(game, i),
+                game, pos=track_to_destination(i),
                 align="center", font_size=10,
                 font_family="Arial",
                 text=key_list_text[i],
