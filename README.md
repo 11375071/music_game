@@ -31,6 +31,10 @@ python src/main.py  # to run
 - [ ] 制作评价结算界面
 - [ ] 完善 PTT 以及最优分数保存
 
+### Optimize
+
+- [ ] 添加歌曲前的几秒等待
+
 ### Code
 
 - [x] 学习 pygame.sprite，看看能否用来简化代码结构，比如不用写一大堆 xxxButton.render() 和 event_check() 语句  
