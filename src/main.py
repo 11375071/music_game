@@ -3,7 +3,7 @@ from pages.home import home
 from pages.play import play
 from pages.menu import menu
 from pages.settings import settings
-from pages.offset_guide import offset_guide
+
 
 def main_game():
 
@@ -31,7 +31,6 @@ def main_game():
         elif state == "menu": menu_page.show()
         elif state == "play": play_page.show()
         elif state == "settings": settings_page.show()
-        elif state == "offset_guide": offset_guide(game, state)
     game.it.quit()
 
 

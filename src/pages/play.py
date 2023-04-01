@@ -1,11 +1,11 @@
 from typing import List
+from obj.note import Note
 import utils.color as color
-from utils.page import Page, SubPage
+from utils.page import Page
+from pages.play_pause import play_pause
 from utils.define import PyGame, StateMachine
 from utils.load import load_music, load_note, level_to_song_path
 from obj.button import SimpleRect, SimpleButton, TextRect, TextButton
-from obj.note import Note
-from pages.play_pause import play_pause
 
 
 class play(Page):
@@ -105,7 +105,7 @@ class play(Page):
             self.add_to_render_list(play_button)
 
         for i in range(4):
-            play_text = TextButton(
+            play_text = TextRect(
                 self.game, pos=track_to_destination(i),
                 align="center", font_size=15,
                 text=key_list_text[i],

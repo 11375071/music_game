@@ -1,7 +1,8 @@
+import utils.color as color
+from utils.page import Page, SubPage
 from utils.define import PyGame, StateMachine
 from obj.button import SimpleRect, TextButton
-from utils.page import Page, SubPage
-import utils.color as color
+
 
 class play_pause(SubPage):
     def __init__(self, game: PyGame, state: StateMachine, mother_page: Page) -> None:

@@ -1,8 +1,9 @@
-from pygame import event
 import utils.color as color
 from utils.page import Page
-from obj.button import ButtonAjustGroup, TextButton
+from pages.offset_guide import offset_guide
 from utils.define import PyGame, StateMachine
+from obj.button import ButtonAjustGroup, TextButton
+
 
 
 class settings(Page):
@@ -49,15 +50,16 @@ class settings(Page):
         self.add_to_click_list(self.offset_ctrl)
 
 
-        def offset_guide():
+        offset_guide_page = offset_guide(self.game, self.state, self)
+        def offset_guide_func():
             self.inited = False
-            self.state.state = "offset_guide"
+            offset_guide_page.enter()
         self.offset_guide_button = TextButton(
             self.game, "offset guide", pos=(100, 250),
             align="left-up", font_size=30,
             fr_color=color.Blue3,
             bg_alpha=0.4, bg_color=color.Yellow3,
-            click_func=offset_guide
+            click_func=offset_guide_func
         )
         self.add_to_render_list(self.offset_guide_button)
         self.add_to_click_list(self.offset_guide_button)
