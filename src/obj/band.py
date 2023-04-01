@@ -61,6 +61,7 @@ class ScrollArea(PositionProperty):
             i[0].render()
 
     def control_check(self):
+
         if self.mouse_pos is not None:
             vertical_partial = (self.mouse_pos[1] - self.pos[1]) / self.size[1]
             if vertical_partial < 0.25:
@@ -70,10 +71,17 @@ class ScrollArea(PositionProperty):
                     self.now_index -= (self.now_index - round(self.now_index)) * 0.3
             else:
                 self.now_index += (vertical_partial - 0.75) / 5 + 0.05
-            while self.now_index < 0:
-                self.now_index += self.len
-            while self.now_index > self.len:
-                self.now_index -= self.len
+            
+            if self.len >= 3:
+                while self.now_index < 0:
+                    self.now_index += self.len
+                while self.now_index > self.len - 1:
+                    self.now_index -= self.len
+            else:
+                if self.now_index < 0:
+                    self.now_index = 0
+                elif self.now_index > self.len - 1:
+                    self.now_index = self.len - 1
         else:
             if abs(self.now_index - round(self.now_index)) > 0.0001:
                 self.now_index -= (self.now_index - round(self.now_index)) * 0.4
