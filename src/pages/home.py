@@ -37,6 +37,7 @@ class home(Page):
             play_origin, play_selected, None,
             collide_using_target = "default",
             click_func = menu,
+            key = self.game.it.K_RETURN
         )
         self.add_to_render_list(self.play_button)
         self.add_to_click_list(self.play_button)

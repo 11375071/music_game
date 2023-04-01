@@ -85,7 +85,7 @@ class SimpleRect:
         self.game.screen.blit(self.image, self.pos_align)
 
 
-class Button(SimpleRect):
+class SimpleButton(SimpleRect):
     def __init__(
         self, game: PyGame,
         size: tuple, pos: tuple, align: str = "center",
@@ -95,27 +95,58 @@ class Button(SimpleRect):
         click_func: Optional[Callable] = None,
         key: Optional[int] = None,
         only_use_key: bool = False,
+        activate_on_keydown: bool = False,
     ):
+        """
+        only_use_key: if False, you can both use key or mouse; or you can only use key
+        activate_on_keydown: if False, it will activate on keyup; or it will activate on keydown
+        """
         super().__init__(game, size, pos, align, color, alpha, image, strip_alpha)
         self.click_func = click_func
         self.key = key
         self.only_use_key = only_use_key
+        self.activate_on_keydown = activate_on_keydown
+        self.__ready_to_click = False
+        self.__ready_to_key = False
 
     def click_check(self, event: event.Event):
         if self.click_func is not None:
             pos = self.game.it.mouse.get_pos()
-            if not self.only_use_key:
-                if event.type == self.game.it.MOUSEBUTTONDOWN:
-                    if self.game.it.mouse.get_pressed()[0]:
+
+            if self.activate_on_keydown:
+                if not self.only_use_key:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN:
                         if self.collide(pos):
                             self.click_func()
-            if self.key is not None:
-                if event.type == self.game.it.KEYDOWN:
-                    if event.key == self.key:
-                        self.click_func()
+                if self.key is not None:
+                    if event.type == self.game.it.KEYDOWN:
+                        if event.key == self.key:
+                            self.click_func()
+
+            else:  # activate_on_keyup
+                if not self.only_use_key:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        if self.collide(pos):
+                            self.__ready_to_click = True
+                        else:
+                            self.__ready_to_click = False
+                    if event.type == self.game.it.MOUSEBUTTONUP:
+                        if self.collide(pos) and self.__ready_to_click:
+                            self.__ready_to_click = False
+                            self.click_func()
+                if self.key is not None:
+                    if event.type == self.game.it.KEYDOWN:
+                        if event.key == self.key:
+                            self.__ready_to_key = True
+                        else:
+                            self.__ready_to_key = False
+                    if event.type == self.game.it.KEYUP:
+                        if event.key == self.key and self.__ready_to_key:
+                            self.__ready_to_key = False
+                            self.click_func()
 
 
-class SimpleText(SimpleRect):
+class TextRect(SimpleRect):
     def __init__(
         self, game: PyGame,
         text: str, pos: tuple, align: str = "center",
@@ -158,7 +189,7 @@ class SimpleText(SimpleRect):
         self.game.screen.blit(self.front, self.pos_align)
 
 
-class TextButton(SimpleText):
+class TextButton(TextRect):
     def __init__(
         self, game: PyGame,
         text: str, pos: tuple, align: str = "center",
@@ -168,7 +199,12 @@ class TextButton(SimpleText):
         click_func: Optional[Callable] = None,
         key: Optional[int] = None,
         only_use_key: bool = False,
+        activate_on_keydown: bool = False,
     ):
+        """
+        only_use_key: if False, you can both use key or mouse; or you can only use key
+        activate_on_keydown: if False, it will activate on keyup; or it will activate on keydown
+        """
         super().__init__(
             game, text, pos, align, font_family,
             font_size, fr_color, fr_alpha, bg_color, bg_alpha
@@ -176,19 +212,45 @@ class TextButton(SimpleText):
         self.click_func = click_func
         self.key = key
         self.only_use_key = only_use_key
+        self.activate_on_keydown = activate_on_keydown
+        self.__ready_to_click = False
+        self.__ready_to_key = False
 
     def click_check(self, event: event.Event):
         if self.click_func is not None:
             pos = self.game.it.mouse.get_pos()
-            if not self.only_use_key:
-                if event.type == self.game.it.MOUSEBUTTONDOWN:
-                    if self.game.it.mouse.get_pressed()[0]:
+
+            if self.activate_on_keydown:
+                if not self.only_use_key:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN:
                         if self.collide(pos):
                             self.click_func()
-            if self.key is not None:
-                if event.type == self.game.it.KEYDOWN:
-                    if event.key == self.key:
-                        self.click_func()
+                if self.key is not None:
+                    if event.type == self.game.it.KEYDOWN:
+                        if event.key == self.key:
+                            self.click_func()
+
+            else:  # activate_on_keyup
+                if not self.only_use_key:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        if self.collide(pos):
+                            self.__ready_to_click = True
+                        else:
+                            self.__ready_to_click = False
+                    if event.type == self.game.it.MOUSEBUTTONUP:
+                        if self.collide(pos) and self.__ready_to_click:
+                            self.__ready_to_click = False
+                            self.click_func()
+                if self.key is not None:
+                    if event.type == self.game.it.KEYDOWN:
+                        if event.key == self.key:
+                            self.__ready_to_key = True
+                        else:
+                            self.__ready_to_key = False
+                    if event.type == self.game.it.KEYUP:
+                        if event.key == self.key and self.__ready_to_key:
+                            self.__ready_to_key = False
+                            self.click_func()
 
 
 class RichRect:
@@ -253,29 +315,62 @@ class RichButton(RichRect):
         click_func: Optional[Callable] = None,
         key: Optional[int] = None,
         only_use_key: bool = False,
+        activate_on_keydown: bool = False,
     ):
         """
         collide_using_target: "self", "default", "hover", "click"
+        only_use_key: if False, you can both use key or mouse; or you can only use key
+        activate_on_keydown: if False, it will activate on keyup; or it will activate on keydown
         """
         super().__init__(game, default_rect, hover_rect, click_rect, collide_using_target)
         self.click_func = click_func
         self.key = key
         self.only_use_key = only_use_key
+        self.activate_on_keydown = activate_on_keydown
+        self.__ready_to_click = False
+        self.__ready_to_key = False
 
     def click_check(self, event: event.Event):
+        # don't forget this
         self.pre_click_check(event)
         if self.click_func is not None:
             pos = self.game.it.mouse.get_pos()
-            if not self.only_use_key:
-                if event.type == self.game.it.MOUSEBUTTONDOWN:
-                    if self.game.it.mouse.get_pressed()[0]:
-                        # this collide is different from SimpleButton or TextButton
+
+            if self.activate_on_keydown:
+                if not self.only_use_key:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN:
                         if self.collide(pos):
                             self.click_func()
-            if self.key is not None:
-                if event.type == self.game.it.KEYDOWN:
-                    if event.key == self.key:
-                        self.click_func()
+                if self.key is not None:
+                    if event.type == self.game.it.KEYDOWN:
+                        if event.key == self.key:
+                            self.click_func()
+
+            else:  # activate_on_keyup
+                if not self.only_use_key:
+                    if event.type == self.game.it.MOUSEBUTTONDOWN:
+                        if self.collide(pos):
+                            self.__ready_to_click = True
+                        else:
+                            self.__ready_to_click = False
+                    if event.type == self.game.it.MOUSEBUTTONUP:
+                        if self.collide(pos) and self.__ready_to_click:
+                            self.__ready_to_click = False
+                            self.click_func()
+                if self.key is not None:
+                    if event.type == self.game.it.KEYDOWN:
+                        if event.key == self.key:
+                            self.now_visible = "click"
+                            self.__ready_to_key = True
+                        else:
+                            self.now_visible = "default"
+                            self.__ready_to_key = False
+                    if event.type == self.game.it.KEYUP:
+                        if event.key == self.key:
+                            self.now_visible = "default"
+                            if self.__ready_to_key:
+                                self.__ready_to_key = False
+                                self.click_func()
 
 
 class ButtonAjustGroup:
@@ -297,32 +392,33 @@ class ButtonAjustGroup:
         self.max_value = max_value
         self.click_func = click_func
 
-        self.text = TextButton(
+        self.text = TextRect(
             game, text, pos,
             align=align, font_size=font_size,
             fr_color=color.Red
         )
         x, y, _x, _y = self.text.rect
         self.left_rect = (x + _x, y, _x, _y)
-        self.left = Button(
+        self.left = SimpleButton(
             game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y),
             align=align, color=color.Red, image=left_img,
             click_func=self.click_left
         )
         x, y, _x, _y = self.left.rect
-        self.num_text = TextButton(
+        self.num_text = TextRect(
             game, str(self.num), pos=(x + _x + 0.5 * _y, y),
             align=align, font_size=font_size,
             fr_color=color.Red
         )
         x, y, _x, _y = self.num_text.rect
-        self.right = Button(
+        self.right = SimpleButton(
             game, size=(_y, _y), pos=(x + _x + 0.5 * _y, y),
             align=align, color=color.Red, image=right_img,
             click_func=self.click_right
         )
 
-        self.button_list = [self.text, self.left, self.num_text, self.right]
+        self.render_list = [self.text, self.left, self.num_text, self.right]
+        self.button_list = [self.left, self.right]
 
     def click_left(self):
         if self.num > self.min_value:
@@ -337,8 +433,8 @@ class ButtonAjustGroup:
         self.click_func()
 
     def render(self):
-        for button in self.button_list:
-            button.render()
+        for texture in self.render_list:
+            texture.render()
 
     def click_check(self, event: event.Event):
         for button in self.button_list:

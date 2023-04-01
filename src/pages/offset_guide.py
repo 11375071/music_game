@@ -2,14 +2,14 @@ from typing import List
 from utils.define import PyGame, StateMachine
 from utils.load import load_music, load_note_from_txt, track_to_destination
 import utils.color as color
-from obj.button import Button, TextButton
+from obj.button import SimpleButton, TextButton
 from obj.note import Note
 
 home_button: TextButton = None
 confirm_button: TextButton = None
 offset_text: TextButton = None
 rank_text: TextButton = None
-play_button_list: List[Button] = []
+play_button_list: List[SimpleButton] = []
 play_inited: bool = False
 
 # must be in the time order
@@ -95,7 +95,7 @@ def play_init(game: PyGame, state: StateMachine):
 
     for i in range(4):
         play_button_list.append(
-            Button(
+            SimpleButton(
                 game, size=(50, 10), pos=track_to_destination(game, i),
                 align="center",
                 color=color.Red, click_func=key_press_func_list[i],

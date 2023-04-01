@@ -2,16 +2,16 @@ from typing import List
 from utils.define import PyGame, StateMachine
 from utils.load import load_music, load_note, track_to_destination, level_to_song_path
 import utils.color as color
-from obj.button import SimpleRect, Button, TextButton
+from obj.button import SimpleRect, SimpleButton, TextRect, TextButton
 from obj.note import Note
 from pages.play_pause import play_pause
 
 back_layer: SimpleRect = None
 pause_button: TextButton = None
-rank_text: TextButton = None
-score_text: TextButton = None
-percentage_text: TextButton = None
-play_button_list: List[Button] = []
+rank_text: TextRect = None
+score_text: TextRect = None
+percentage_text: TextRect = None
+play_button_list: List[SimpleButton] = []
 play_inited: bool = False
 
 # must be in the time order
@@ -99,16 +99,17 @@ def play_init(game: PyGame, state: StateMachine):
         game, "PAUSE", (game.size[0] - 10, 10),
         align="right-up", font_size=int(min(*game.size) / 20),
         fr_color=color.Blue2, bg_alpha=0,
-        click_func=pause, key=game.it.K_SPACE
+        click_func=pause, key=game.it.K_SPACE,
+        activate_on_keydown=True
     )
 
     for i in range(4):
         play_button_list.append(
-            Button(
+            SimpleButton(
                 game, size=(50, 10), pos=track_to_destination(game, i),
                 align="center",
                 color=color.Red, click_func=key_press_func_list[i],
-                key=key_list[i], only_use_key=True
+                key=key_list[i], only_use_key=True, activate_on_keydown=True
             )
         )
         play_button_list.append(
@@ -116,34 +117,30 @@ def play_init(game: PyGame, state: StateMachine):
                 game, pos=track_to_destination(game, i),
                 align="center", font_size=15,
                 text=key_list_text[i],
-                fr_alpha=0, fr_color=color.White,
+                fr_alpha=1, fr_color=color.White,
             )
         )
     
-    rank_text = TextButton(
+    rank_text = TextRect(
         game, pos=(game.size[0] / 2, game.size[1] / 3 * 2 + 30),
         align="center", text="",
         font_size=30, fr_color=color.Red, 
         bg_color=color.White, bg_alpha=0,
-        click_func=None
     )
 
-    score_text = TextButton(
+    score_text = TextRect(
         game, pos=(50, 60),
         align="left-up", text="",
         font_size=30, fr_color=color.Red, 
         bg_color=color.White, bg_alpha=0,
-        click_func=None
     )
 
-    percentage_text = TextButton(
+    percentage_text = TextRect(
         game, pos=(50, 100),
         align="left-up", text="",
         font_size=30, fr_color=color.Red, 
         bg_color=color.White, bg_alpha=0,
-        click_func=None
     )
-
 
     # other
     load_music(game, level_to_song_path(state["normal"]["level"])[0])
