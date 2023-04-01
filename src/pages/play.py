@@ -1,4 +1,5 @@
 from typing import List
+import preload.img as img
 from obj.note import Note
 import utils.color as color
 from utils.page import Page
@@ -25,7 +26,7 @@ class play(Page):
 
         self.back_layer = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), align="left-up", image="src/image/play_background.png"
+            (0, 0), align="left-up", image=img.play_surface
         )
         self.add_to_render_list(self.back_layer)
 
@@ -64,6 +65,7 @@ class play(Page):
                     continue
                 if abs(note.time) < 0.044:
                     self.notes.remove(note)
+                    self.del_render_list(note)
                     self.resolved_notes.append(note)
                     note.rank("perfect")
                     self.rank_text.change_text("perfect")
@@ -72,6 +74,7 @@ class play(Page):
                     return
                 elif abs(note.time) < 0.084:
                     self.notes.remove(note)
+                    self.del_render_list(note)
                     self.resolved_notes.append(note)
                     note.rank("great")
                     self.rank_text.change_text("great")
@@ -80,6 +83,7 @@ class play(Page):
                     return
                 elif abs(note.time) < 0.118:
                     self.notes.remove(note)
+                    self.del_render_list(note)
                     self.resolved_notes.append(note)
                     note.rank("good")
                     self.rank_text.change_text("good")
@@ -88,6 +92,7 @@ class play(Page):
                     return
                 elif note.time < 0.15:
                     self.notes.remove(note)
+                    self.del_render_list(note)
                     self.resolved_notes.append(note)
                     note.rank("miss")
                     self.rank_text.change_text("miss")
@@ -162,17 +167,22 @@ class play(Page):
 
     # overload controlflow
     def control_flow(self):
-        self.duration =self.game.it.mixer.music.get_pos() + self.state["normal"]["offset"]
+        self.duration = self.game.it.mixer.music.get_pos() + self.state["normal"]["offset"]
 
         for note in self.notes:
             note.time = note.init_time - self.duration * 0.001
+            note.appear = True
             if note.time < -0.3:
                 self.notes.remove(note)
+                self.del_render_list(note)
                 self.resolved_notes.append(note)
                 note.rank("miss")
                 self.rank_text.change_text("miss")
                 self.score += note.score
                 self.max_score += note.max_score
+            # no more
+            if note.time >= 5:
+                break
 
         if self.max_score == 0:
             pct = 0

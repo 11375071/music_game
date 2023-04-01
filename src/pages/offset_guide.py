@@ -1,4 +1,5 @@
 from typing import List
+import preload.img as img
 from obj.note import Note
 import utils.color as color
 from utils.page import Page, SubPage
@@ -22,7 +23,7 @@ class offset_guide(SubPage):
 
         self.back_layer = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), align="left-up", image="src/image/play_background.png"
+            (0, 0), align="left-up", image=img.play_surface
         )
         self.add_to_render_list(self.back_layer)
 
@@ -80,6 +81,7 @@ class offset_guide(SubPage):
                 if note.destination != destination:
                     continue
                 if note.time < 0.15:
+                    self.del_render_list(note)
                     self.notes.remove(note)
                     note.resolved()
                     self.offset_list.append(int(note.time * 1000))
@@ -143,7 +145,9 @@ class offset_guide(SubPage):
 
         for note in self.notes:
             note.time = note.init_time - duration * 0.001
+            note.appear = True
             if note.time < -2.0:
+                self.del_render_list(note)
                 self.notes.remove(note)
                 note.rank("miss")
 

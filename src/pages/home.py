@@ -1,3 +1,4 @@
+import preload.img as img
 from utils.page import Page
 from obj.button import SimpleRect, RichButton
 from utils.define import PyGame, StateMachine
@@ -14,22 +15,22 @@ class home(Page):
 
         self.background = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), "left-up", image = "src/image/home_page.png"
+            (0, 0), "left-up", image = img.homepage_surface,
         )
         self.add_to_render_list(self.background)
 
 
         def menu():
-            self.play_button.now_visible = "default"
+            self.play_button.now_press_state = "default"
             self.state.state = "menu"
         play_origin = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), "left-up", image = "src/image/play_origin.png",
+            (0, 0), "left-up", image = img.homepage_play_button_tuple_1,
             strip_alpha = True,
         )
         play_selected = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), "left-up", image = "src/image/play_selected.png",
+            (0, 0), "left-up", image = img.homepage_play_button_tuple_2,
             strip_alpha = True,
         )
         self.play_button = RichButton(
@@ -44,16 +45,16 @@ class home(Page):
 
 
         def settings():
-            self.setting_button.now_visible = "default"
+            self.setting_button.now_press_state = "default"
             self.state.state = "settings"
         setting_origin = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), "left-up", image = "src/image/setting_origin.png",
+            (0, 0), "left-up", image = img.homepage_settings_button_tuple_1,
             strip_alpha = True,
         )
         setting_selected = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), "left-up", image = "src/image/setting_selected.png",
+            (0, 0), "left-up", image = img.homepage_settings_button_tuple_2,
             strip_alpha = True,
         )
         self.setting_button = RichButton(

@@ -1,12 +1,9 @@
-from typing import Union
-from utils.define import PyGame
+import preload.img as img
 import utils.color as color
+from utils.define import PyGame
+from typing import Union, Optional
 from pygame.surface import Surface
-import pygame
-
-
-default_surface = pygame.image.load("src/image/note_green.png")
-default_surface = pygame.transform.scale(default_surface, (50, 10))
+from obj.property import ImageProperty
 
 
 # todo: load_notes, notes, resolved notes all gathered here.
@@ -15,12 +12,13 @@ class Notes:
         pass
 
 
-class Note:
+class Note(ImageProperty):
 
     def __init__(
         self, game: PyGame,
         size: tuple = (50, 10), destination: tuple = (100, 100), align: str = "center",
-        color: tuple = color.AliceBlue, alpha: float = 1, image: Union[str, Surface] = default_surface,
+        color: tuple = color.AliceBlue, alpha: float = 1,
+        image: Optional[Union[str, Surface]] = img.note_surface_scaled,
         speed: float = 11, init_time: float = 1, time: float = 1,
     ) -> None:
         self.game = game
@@ -35,25 +33,12 @@ class Note:
         self.time = time
 
         self.rank_type = "none"
-        self.appear = True
+        self.appear = False
+        self.strip_alpha = False
+        self.scaled = True
 
         self.change_image()
         self.align_destination()
-
-    def change_image(self):
-        if type(self.image) is Surface:
-            self.image = self.game.it.transform.scale(
-                self.image, self.size
-            )
-        elif type(self.image) is str:
-            self.image = self.game.it.image.load(self.image)
-            self.image = self.game.it.transform.scale(
-                self.image, self.size
-            )
-        else:
-            self.image = self.game.it.Surface(self.size)
-            self.image.fill(self.color)
-            self.image.set_alpha(int(256 * self.alpha))
 
     def align_destination(self):
         if self.align == "center":

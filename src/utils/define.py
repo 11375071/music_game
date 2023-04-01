@@ -73,7 +73,6 @@ class StateMachine:
     def __init__(self, init_state: str) -> None:
         self.state: str = init_state
         self.quit: bool = False
-        self.__attr_dict: Dict[str, Any] = {}
         self.__data_dict: Dict[str, StaticData] = {}
 
     def __setitem__(self, name: str, data: StaticData):
