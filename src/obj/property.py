@@ -8,7 +8,12 @@ from typing import Callable, Optional, Union, Tuple
 
 class ClickCheckProperty:
     """
-    `pre_click_check(event)`, `click_check(event)`, `control_check()`
+    `pre_event_check(event)`, `event_check(event)`, `control_check()`
+    required property: game, click_func, key, alpha, only_use_key,
+    activate_on_keydown, long_update,
+    now_press_state, long_press_frame, long_press_max,
+    (_ready_to_click, _ready_to_key just set to False)
+    required method: collide()
     """
 
     def __init__(self) -> None:
@@ -29,7 +34,7 @@ class ClickCheckProperty:
         self._ready_to_key: bool = None
         assert(False, "you cannot init ClickCheckProperty")
 
-    def pre_click_check(self, event: event.Event):
+    def pre_event_check(self, event: event.Event):
         pos = self.game.it.mouse.get_pos()
         if event.type == self.game.it.MOUSEMOTION:
             if self.collide(pos):
@@ -41,11 +46,11 @@ class ClickCheckProperty:
                 self.now_press_state = "default"
         return pos
 
-    def click_check(self, event: event.Event):
+    def event_check(self, event: event.Event):
 
         if not self.only_use_key:
             # avoid get pos for 2 times
-            pos = self.pre_click_check(event)
+            pos = self.pre_event_check(event)
         else:
             pos = self.game.it.mouse.get_pos()
 
@@ -115,6 +120,7 @@ class ClickCheckProperty:
 class ImageProperty:
     """
     `change_image()`
+    required property: game, size, color, alpha, image, strip_alpha, scaled
     """
     
     def __init__(self) -> None:
@@ -169,6 +175,7 @@ class ImageProperty:
 class PositionProperty:
     """
     `align_position()`, `change_position(pos, size)`
+    required property: game, size, pos, align
     """
     
     def __init__(self) -> None:
@@ -181,7 +188,7 @@ class PositionProperty:
         self.pos: tuple = None
         self.align: str = None
         assert(False, "you cannot init PositionProperty")
-    
+
     def align_position(self):
         if self.align == "center":
             self.pos_align = self.pos[0] - self.size[0] / 2, \
@@ -211,3 +218,8 @@ class PositionProperty:
         else:  # "left-up"
             pos_align = pos
         self.rect = self.game.it.Rect(pos_align, size)
+        return pos_align, size
+    
+    def resize(self, pos: tuple, size: tuple):
+        self.pos = pos
+        self.pos_align, self.size = self.change_position(pos, size)

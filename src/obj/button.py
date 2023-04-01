@@ -302,6 +302,6 @@ class ButtonAjustGroup:
         for button in self.button_list:
             button.control_check()
 
-    def click_check(self, event: event.Event):
+    def event_check(self, event: event.Event):
         for button in self.button_list:
-            button.click_check(event)
+            button.event_check(event)

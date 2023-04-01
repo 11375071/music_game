@@ -58,7 +58,7 @@ class Page:
             if event.type == self.game.it.QUIT:
                 self.state.quit = True
             for i in self._bind:
-                i.click_check(event)
+                i.event_check(event)
             self.event_deal(event)
         
         for i in self._bind:
@@ -94,7 +94,7 @@ class Page:
 
     def add_to_click_list(self, object) -> Any:
         '''
-        object should have method .click_check(event)
+        object should have method .event_check(event)
         '''
         self._bind.append(object)
 
