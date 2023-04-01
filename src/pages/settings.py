@@ -1,7 +1,7 @@
 from pygame import event
 import utils.color as color
 from utils.page import Page
-from obj.button import ButtonGroup, TextButton
+from obj.button import ButtonAjustGroup, TextButton
 from utils.define import PyGame, StateMachine
 
 
@@ -28,7 +28,7 @@ class settings(Page):
 
         def get_speed():
             self.state["normal"]["speed"] = self.speed_ctrl.num
-        self.speed_ctrl = ButtonGroup(
+        self.speed_ctrl = ButtonAjustGroup(
             self.game, pos=(100, 100),
             text="speed: ", default_value=self.state["normal"]["speed"],
             click_func=get_speed
@@ -39,7 +39,7 @@ class settings(Page):
 
         def get_offset():
             self.state["normal"]["offset"] = self.offset_ctrl.num
-        self.offset_ctrl = ButtonGroup(
+        self.offset_ctrl = ButtonAjustGroup(
             self.game, pos=(100, 200),
             text="offset: ", default_value=self.state["normal"]["offset"],
             min_value=-1000, max_value=1000,
@@ -65,7 +65,7 @@ class settings(Page):
 
         def get_level():
             self.state["normal"]["level"] = self.level_ctrl.num
-        self.level_ctrl = ButtonGroup(
+        self.level_ctrl = ButtonAjustGroup(
             self.game, pos=(100, 350),
             text="song level: ", default_value=self.state["normal"]["level"],
             min_value=1, max_value=6,

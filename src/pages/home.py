@@ -20,40 +20,46 @@ class home(Page):
 
 
         def menu():
+            self.play_button.now_visible = "default"
             self.state.state = "menu"
         play_origin = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), "left-up", image = "src/image/play_origin.png"
+            (0, 0), "left-up", image = "src/image/play_origin.png",
+            strip_alpha = True,
         )
-        play_origin.change_click_rect((730, 90), (180, 150))
         play_selected = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), "left-up", image = "src/image/play_selected.png"
+            (0, 0), "left-up", image = "src/image/play_selected.png",
+            strip_alpha = True,
         )
-        play_selected.change_click_rect((730, 90), (180, 150))
         self.play_button = RichButton(
             self.game,
-            play_origin, play_selected, None, menu
+            play_origin, play_selected, None,
+            collide_using_target = "default",
+            click_func = menu,
         )
         self.add_to_render_list(self.play_button)
         self.add_to_click_list(self.play_button)
 
 
         def settings():
+            self.setting_button.now_visible = "default"
             self.state.state = "settings"
         setting_origin = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), "left-up", image = "src/image/setting_origin.png"
+            (0, 0), "left-up", image = "src/image/setting_origin.png",
+            strip_alpha = True,
         )
-        setting_origin.change_click_rect((780, 240), (100, 100))
         setting_selected = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
-            (0, 0), "left-up", image = "src/image/setting_selected.png"
+            (0, 0), "left-up", image = "src/image/setting_selected.png",
+            strip_alpha = True,
         )
-        setting_selected.change_click_rect((780, 240), (100, 100))
         self.setting_button = RichButton(
             self.game,
-            setting_origin, setting_selected, None, settings
+            setting_origin, setting_selected, None,
+            collide_using_target = "default",
+            click_func = settings,
         )
         self.add_to_render_list(self.setting_button)
         self.add_to_click_list(self.setting_button)

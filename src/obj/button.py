@@ -2,6 +2,7 @@ from pygame import event
 from typing import Callable, Optional
 from utils.define import PyGame
 import utils.color as color
+import matplotlib.image as mpimg
 
 
 class SimpleRect:
@@ -10,6 +11,7 @@ class SimpleRect:
         size: tuple, pos: tuple, align: str = "center",
         color: tuple = color.PaleGreen2, alpha: float = 1,
         image: Optional[str] = None,
+        strip_alpha: bool = False,
     ) -> None:
         self.game = game
         self.size = size
@@ -18,11 +20,14 @@ class SimpleRect:
         self.color = color
         self.alpha = alpha
         self.image = image
+        self.strip_alpha = strip_alpha
+        self.load_image = None
         self.change_image()
         self.align_position()
 
     def change_image(self):
         if self.image is not None:
+            self.load_image = mpimg.imread(self.image)
             self.image = self.game.it.image.load(self.image)
             self.image = self.game.it.transform.scale(
                 self.image, self.size
@@ -43,7 +48,7 @@ class SimpleRect:
                 self.size[0], self.pos[1] - self.size[1]
         elif self.align == "left-down":
             self.pos_align = self.pos[0], self.pos[1] - self.size[1]
-        else:
+        else:  # "left-up"
             self.pos_align = self.pos
 
         # click rect
@@ -60,12 +65,21 @@ class SimpleRect:
                 size[0], pos[1] - size[1]
         elif self.align == "left-down":
             pos_align = pos[0], pos[1] - size[1]
-        else:
+        else:  # "left-up"
             pos_align = pos
         self.rect = self.game.it.Rect(pos_align, size)
 
     def collide(self, pos: tuple):
-        return self.rect.collidepoint(*pos)
+        if self.strip_alpha and self.load_image is not None:
+            if not self.rect.collidepoint(*pos):
+                return False
+            return self.load_image[
+                int(pos[1] / self.size[1] * self.load_image.shape[0])
+            ][
+                int(pos[0] / self.size[0] * self.load_image.shape[1])
+            ][-1]
+        else:
+            return self.rect.collidepoint(*pos)
 
     def render(self):
         self.game.screen.blit(self.image, self.pos_align)
@@ -77,11 +91,88 @@ class Button(SimpleRect):
         size: tuple, pos: tuple, align: str = "center",
         color: tuple = color.PaleGreen2, alpha: float = 1,
         image: Optional[str] = None,
+        strip_alpha: bool = False,
         click_func: Optional[Callable] = None,
         key: Optional[int] = None,
         only_use_key: bool = False,
     ):
-        super().__init__(game, size, pos, align, color, alpha, image)
+        super().__init__(game, size, pos, align, color, alpha, image, strip_alpha)
+        self.click_func = click_func
+        self.key = key
+        self.only_use_key = only_use_key
+
+    def click_check(self, event: event.Event):
+        if self.click_func is not None:
+            pos = self.game.it.mouse.get_pos()
+            if not self.only_use_key:
+                if event.type == self.game.it.MOUSEBUTTONDOWN:
+                    if self.game.it.mouse.get_pressed()[0]:
+                        if self.collide(pos):
+                            self.click_func()
+            if self.key is not None:
+                if event.type == self.game.it.KEYDOWN:
+                    if event.key == self.key:
+                        self.click_func()
+
+
+class SimpleText(SimpleRect):
+    def __init__(
+        self, game: PyGame,
+        text: str, pos: tuple, align: str = "center",
+        font_family: str = "consolas", font_size: int = 100,
+        fr_color: tuple = color.PaleGreen2, fr_alpha: float = 1,
+        bg_color: tuple = color.cyan, bg_alpha: float = 0,
+    ) -> None:
+        # no super, since size is not calculated here
+        self.game = game
+        self.text = text
+        self.pos = pos
+        self.align = align
+        self.font = self.game.it.font.SysFont(font_family, font_size)
+        self.fr_color = fr_color
+        self.fr_alpha = fr_alpha
+        self.bg_color = bg_color
+        self.bg_alpha = bg_alpha
+        self.change_text(self.text)
+
+    def change_text(self, text):
+        self.text = text
+        self.text = self.font.render(
+            self.text, 1, [*self.fr_color, self.fr_alpha]
+        )
+        self.size = self.text.get_size()
+        self.front = self.game.it.Surface(self.size).convert_alpha()
+        self.front.fill([0, 0, 0, 0])
+        self.front.set_alpha(int(256 * self.fr_alpha))
+        self.front.blit(self.text, (0, 0))
+        self.background = self.game.it.Surface(self.size)
+        self.background.fill(self.bg_color)
+        self.background.set_alpha(int(256 * self.bg_alpha))
+        self.align_position()
+
+    def collide(self, pos: tuple):
+        return self.rect.collidepoint(*pos)
+
+    def render(self):
+        self.game.screen.blit(self.background, self.pos_align)
+        self.game.screen.blit(self.front, self.pos_align)
+
+
+class TextButton(SimpleText):
+    def __init__(
+        self, game: PyGame,
+        text: str, pos: tuple, align: str = "center",
+        font_family: str = "consolas", font_size: int = 100,
+        fr_color: tuple = color.PaleGreen2, fr_alpha: float = 1,
+        bg_color: tuple = color.cyan, bg_alpha: float = 0,
+        click_func: Optional[Callable] = None,
+        key: Optional[int] = None,
+        only_use_key: bool = False,
+    ):
+        super().__init__(
+            game, text, pos, align, font_family,
+            font_size, fr_color, fr_alpha, bg_color, bg_alpha
+        )
         self.click_func = click_func
         self.key = key
         self.only_use_key = only_use_key
@@ -106,32 +197,47 @@ class RichRect:
         default_rect: SimpleRect,
         hover_rect: Optional[SimpleRect] = None,
         click_rect: Optional[SimpleRect] = None,
+        collide_using_target: str = "self"
     ):
+        """
+        collide_using_target: "self", "default", "hover", "click"
+        """
         self.game = game
         self.default_rect = default_rect
         self.hover_rect = default_rect if hover_rect is None else hover_rect
         self.click_rect = hover_rect if click_rect is None else click_rect
-        self.now_render = "default"
+        self.collide_using_target = collide_using_target
+        self.now_visible = "default"
 
     @property
     def now_rect(self):
-        if self.now_render == "default":
+        if self.now_visible == "default":
             return self.default_rect
-        elif self.now_render == "hover":
+        elif self.now_visible == "hover":
             return self.hover_rect
-        elif self.now_render == "click":
+        elif self.now_visible == "click":
             return self.click_rect
+
+    def collide(self, pos):
+        if self.collide_using_target == "default":
+            return self.default_rect.collide(pos)
+        elif self.collide_using_target == "hover":
+            return self.hover_rect.collide(pos)
+        elif self.collide_using_target == "click":
+            return self.click_rect.collide(pos)
+        else:  # "self"
+            return self.now_rect.collide(pos)
 
     def pre_click_check(self, event: event.Event):
         pos = self.game.it.mouse.get_pos()
         if event.type == self.game.it.MOUSEMOTION:
-            if self.now_rect.collide(pos):
+            if self.collide(pos):
                 if self.game.it.mouse.get_pressed()[0]:
-                    self.now_render = "click"
+                    self.now_visible = "click"
                 else:
-                    self.now_render = "hover"
+                    self.now_visible = "hover"
             else:
-                self.now_render = "default"
+                self.now_visible = "default"
 
     def render(self):
         self.now_rect.render()
@@ -143,11 +249,15 @@ class RichButton(RichRect):
         default_rect: SimpleRect,
         hover_rect: Optional[SimpleRect] = None,
         click_rect: Optional[SimpleRect] = None,
+        collide_using_target: str = "self",
         click_func: Optional[Callable] = None,
         key: Optional[int] = None,
         only_use_key: bool = False,
     ):
-        super().__init__(game, default_rect, hover_rect, click_rect)
+        """
+        collide_using_target: "self", "default", "hover", "click"
+        """
+        super().__init__(game, default_rect, hover_rect, click_rect, collide_using_target)
         self.click_func = click_func
         self.key = key
         self.only_use_key = only_use_key
@@ -159,7 +269,8 @@ class RichButton(RichRect):
             if not self.only_use_key:
                 if event.type == self.game.it.MOUSEBUTTONDOWN:
                     if self.game.it.mouse.get_pressed()[0]:
-                        if self.now_rect.collide(pos):
+                        # this collide is different from SimpleButton or TextButton
+                        if self.collide(pos):
                             self.click_func()
             if self.key is not None:
                 if event.type == self.game.it.KEYDOWN:
@@ -167,53 +278,7 @@ class RichButton(RichRect):
                         self.click_func()
 
 
-class TextButton(Button):
-    def __init__(
-        self,
-        game: PyGame,
-        text: str, pos: tuple, align: str = "center",
-        font_family: str = "consolas", font_size: int = 100,
-        fr_color: tuple = color.PaleGreen2, fr_alpha: float = 1,
-        bg_color: tuple = color.cyan, bg_alpha: float = 0,
-        click_func: Optional[Callable] = None,
-        key: Optional[int] = None,
-        only_use_key: bool = False,
-    ):
-        self.game = game
-        self.text = text
-        self.pos = pos
-        self.align = align
-        self.font = self.game.it.font.SysFont(font_family, font_size)
-        self.fr_color = fr_color
-        self.fr_alpha = fr_alpha
-        self.bg_color = bg_color
-        self.bg_alpha = bg_alpha
-        self.click_func = click_func
-        self.key = key
-        self.only_use_key = only_use_key
-        self.change_text(text)
-
-    def change_text(self, text):
-        self.text = text
-        self.text = self.font.render(
-            self.text, 1, [*self.fr_color, self.fr_alpha]
-        )
-        self.size = self.text.get_size()
-        self.front = self.game.it.Surface(self.size).convert_alpha()
-        self.front.fill([0, 0, 0, 0])
-        self.front.set_alpha(int(256 * self.fr_alpha))
-        self.front.blit(self.text, (0, 0))
-        self.background = self.game.it.Surface(self.size)
-        self.background.fill(self.bg_color)
-        self.background.set_alpha(int(256 * self.bg_alpha))
-        self.align_position()
-
-    def render(self):
-        self.game.screen.blit(self.background, self.pos_align)
-        self.game.screen.blit(self.front, self.pos_align)
-
-
-class ButtonGroup:
+class ButtonAjustGroup:
     def __init__(
         self, game: PyGame,
         font_size: int = 30, pos: tuple = (0, 0),

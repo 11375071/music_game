@@ -36,7 +36,6 @@ class Page:
 
     def show(self):
         if not self.inited:
-            print("init now")
             self.__init()
 
         for event in self.game.it.event.get():
