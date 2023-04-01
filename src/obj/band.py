@@ -78,13 +78,13 @@ class ScrollArea(PositionProperty):
 
         if self.mouse_pos is not None:
             vertical_partial = (self.mouse_pos[1] - self.pos[1]) / self.size[1]
-            if vertical_partial < 0.3:
-                self.now_index -= (0.3 - vertical_partial) / 5 + 0.03
-            elif vertical_partial <= 0.7:
+            if vertical_partial < 0.28:
+                self.now_index -= (0.28 - vertical_partial) / 5 + 0.05
+            elif vertical_partial <= 0.72:
                 if abs(self.now_index - round(self.now_index)) > 0.0001:
                     self.now_index -= (self.now_index - round(self.now_index)) * 0.3
             else:
-                self.now_index += (vertical_partial - 0.7) / 5 + 0.03
+                self.now_index += (vertical_partial - 0.72) / 5 + 0.05
             
             if self.len >= 3:
                 while self.now_index < 0:
