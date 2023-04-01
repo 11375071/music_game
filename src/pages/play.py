@@ -90,19 +90,13 @@ class play(Page):
 
         key_list = [self.game.it.K_z, self.game.it.K_x, self.game.it.K_PERIOD, self.game.it.K_SLASH]
         key_list_text = ['z', 'x', '.', '/']
-        key_press_list = [
-            lambda:key_press(track_to_destination(0)),
-            lambda:key_press(track_to_destination(1)),
-            lambda:key_press(track_to_destination(2)),
-            lambda:key_press(track_to_destination(3))
-        ]
         for i in range(4):
-            inner_func = lambda:key_press(track_to_destination(i))
             play_button = SimpleButton(
                 self.game, size=(50, 10), pos=track_to_destination(i),
                 align="center",
                 color=color.Red,
-                click_func=key_press_list[i],  # inner_func cannot work, only key_press_list can
+                # if not add a lambda scope, all function will be the same as the last function
+                click_func=(lambda x: lambda: key_press(track_to_destination(x)))(i),
                 key=key_list[i], only_use_key=True, activate_on_keydown=True
             )
             self.add_to_click_list(play_button)
