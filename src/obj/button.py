@@ -27,7 +27,8 @@ class SimpleRect:
 
     def change_image(self):
         if self.image is not None:
-            self.load_image = mpimg.imread(self.image)
+            if self.strip_alpha:
+                self.load_image = mpimg.imread(self.image)
             self.image = self.game.it.image.load(self.image)
             self.image = self.game.it.transform.scale(
                 self.image, self.size

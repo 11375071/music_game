@@ -2,7 +2,7 @@ import os
 import yaml
 import pygame
 from yaml.loader import SafeLoader
-from typing import Callable, Optional, Dict
+from typing import Callable, Optional, Dict, Any
 
 
 class PyGame:
@@ -73,8 +73,7 @@ class StateMachine:
     def __init__(self, init_state: str) -> None:
         self.state: str = init_state
         self.quit: bool = False
-        self.__sub_page_dict: dict = {}
-        self.__mother_render_dict: dict = {}
+        self.__attr_dict: Dict[str, Any] = {}
         self.__data_dict: Dict[str, StaticData] = {}
 
     def __setitem__(self, name: str, data: StaticData):
@@ -85,31 +84,3 @@ class StateMachine:
 
     def __eq__(self, argument: str) -> bool:
         return self.state == argument
-
-    @property
-    def sub_page(self) -> str:
-        return self.__sub_page_dict.setdefault(self.state, None)
-    
-    @sub_page.setter
-    def sub_page(self, sub_page_name: str):
-        self.__sub_page_dict[self.state] = sub_page_name
-    
-    @property
-    def mother_render(self) -> Optional[Callable]:
-        return self.__mother_render_dict.setdefault(self.state, None)
-    
-    @mother_render.setter
-    def mother_render(self, mother_render_func: Optional[Callable]):
-        self.__mother_render_dict[self.state] = mother_render_func
-
-    def specify_mother_render(self, state_name: str) -> Optional[Callable]:
-        return self.__mother_render_dict.setdefault(state_name, None)
-    
-    def set_specify_mother_render(self, state_name: str, mother_render_func: str):
-        self.__mother_render_dict[state_name] = mother_render_func
-
-    def specify_sub_page(self, state_name: str) -> str:
-        return self.__sub_page_dict.setdefault(state_name, None)
-    
-    def set_specify_sub_page(self, state_name: str, sub_page_name: str):
-        self.__sub_page_dict[state_name] = sub_page_name

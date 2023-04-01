@@ -1,6 +1,6 @@
 from typing import List
 import utils.color as color
-from utils.page import Page
+from utils.page import Page, SubPage
 from utils.define import PyGame, StateMachine
 from utils.load import load_music, load_note, level_to_song_path
 from obj.button import SimpleRect, SimpleButton, TextRect, TextButton
@@ -20,11 +20,11 @@ class play(Page):
             return (self.game.size[0] / 2 - 100 * track + 150, self.game.size[1] / 5 * 4)
 
 
-        back_layer = SimpleRect(
+        self.back_layer = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
             (0, 0), align="left-up", image="src/image/play_background.png"
         )
-        self.add_to_render_list(back_layer)
+        self.add_to_render_list(self.back_layer)
 
 
         self.notes: List[Note] = []
@@ -39,18 +39,20 @@ class play(Page):
             self.add_to_render_list(note)
 
 
+        self.pause_page = play_pause(self.game, self.state, self)
         def pause():
             self.game.it.mixer.music.pause()
-            self.state.sub_page = "pause"
-        pause_button = TextButton(
+            self.pause_page.enter()
+        self.pause_button = TextButton(
             self.game, "PAUSE", (self.game.size[0] - 10, 10),
             align="right-up", font_size=int(min(*self.game.size) / 20),
-            fr_color=color.Blue2, bg_alpha=0,
+            fr_color=color.WhiteSmoke, bg_alpha=0,
             click_func=pause, key=self.game.it.K_SPACE,
             activate_on_keydown=True
         )
-        self.add_to_render_list(pause_button)
-        self.add_to_click_list(pause_button)
+        self.add_to_render_list(self.pause_button)
+        self.add_to_click_list(self.pause_button)
+        self.pause_page.del_mother_visible(self.pause_button)
 
 
         def key_press(destination):
@@ -142,20 +144,6 @@ class play(Page):
         load_music(self.game, level_to_song_path(self.state["normal"]["level"])[0])
 
 
-    # overload state_machine
-    def state_machine(self):
-        if self.state.sub_page is not None:
-            # self.state.mother_render = render
-            if self.state.sub_page == "pause":
-                play_pause(self.game, self.state)
-            if self.state.sub_page == "replay":
-                self.state.sub_page = None
-                self.inited = False
-            self.stop = True
-        else:
-            self.stop = False
-
-
     # overload controlflow
     def control_flow(self):
         self.duration =self.game.it.mixer.music.get_pos() + self.state["normal"]["offset"]
@@ -170,7 +158,7 @@ class play(Page):
                 self.resolved_notes.append(note)
                 note.resolved()
                 note.rank("miss")
-                self.rank_text.change_text("miss")
+                self.rank_text.chane_text("miss")
         
         for note in self.resolved_notes:
             self.max_score += 1000
