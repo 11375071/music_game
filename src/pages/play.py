@@ -10,8 +10,6 @@ from obj.button import SimpleRect, SimpleButton, TextRect, TextButton, RichButto
 
 
 class play(Page):
-    def __init__(self, game: PyGame, state: StateMachine) -> None:
-        super().__init__(game, state)
 
     # overload init
     def init(self):

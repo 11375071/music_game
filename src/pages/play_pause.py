@@ -5,13 +5,7 @@ from obj.button import SimpleRect, TextButton
 
 
 class play_pause(SubPage):
-    def __init__(
-            self, game: PyGame,
-            state: StateMachine, mother_page: Page,
-            need_mother_texture: bool = True
-        ) -> None:
-        super().__init__(game, state, mother_page, need_mother_texture)
-    
+
     def init(self):
         def menu():
             self.game.it.mixer.music.unload()

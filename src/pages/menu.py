@@ -8,8 +8,6 @@ from utils.define import PyGame, StateMachine
 
 
 class menu(Page):
-    def __init__(self, game: PyGame, state: StateMachine) -> None:
-        super().__init__(game, state)
 
     # overload init
     def init(self):

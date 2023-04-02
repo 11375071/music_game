@@ -9,24 +9,30 @@ class Page:
     inherit this.
 
     you may need to overload:
-      init(), event_deal(event), control_flow()
+      `init(self)`, `event_deal(self, event)`, `control_flow(self)`
 
     you may need to use inside:
-      add_to_xxx(), del_from_xxx()
+      `self.add_to_xxx(object)`, `self.del_from_xxx(object)`, `self.game`, `self.state`, `self.inited`
 
     you must use outside:
-      show()
+      `page_obj.show()`
     """
 
-    def __init__(self,  game: PyGame, state: StateMachine) -> None:
+    def __init__(
+        self,
+        game: PyGame, state: StateMachine,
+        fps: int = 60,
+    ) -> None:
         self.game = game
         self.state = state
+        self.fps = fps
+
         self.inited = False
-        self.in_daughter = False
-        self.daughters: List[SubPage] = []
+        self._in_daughter = False
+        self._daughters: List[SubPage] = []
         self._texture: list = []
         self._bind: list = []
-        self.frame = 0
+        self._frame = 0
 
     def init(self) -> None:
         pass
@@ -39,16 +45,16 @@ class Page:
 
     def show(self) -> None:
 
-        self.frame += 1
+        self._frame += 1
 
-        self.in_daughter = False
-        for i in self.daughters:
+        self._in_daughter = False
+        for i in self._daughters:
             if i._ready:
-                self.in_daughter = True
+                self._in_daughter = True
                 i.show()
                 break
 
-        if self.in_daughter:
+        if self._in_daughter:
             return
 
         if not self.inited:
@@ -68,14 +74,14 @@ class Page:
 
         self._render()
 
-        # if self.frame % 60 == 0:
-        #     print(self.frame, len(self._texture), len(self._bind))
+        # if self._frame % self.fps == 0:
+        #     print(self._frame, len(self._texture), len(self._bind))
 
-        if self.frame >= 5184000:
-            self.frame = 0
+        if self._frame >= 86400 * self.fps:
+            self._frame = 0
 
         self.game.render_update()
-        self.game.clock.tick(60)
+        self.game.clock.tick(self.fps)
 
     def _init(self) -> None:
         self._texture.clear()
@@ -111,25 +117,27 @@ class SubPage(Page):
     inherit this.
 
     you may need to overload:
-      init(), event_deal(event), control_flow()
+      `init(self)`, `event_deal(self, event)`, `control_flow(self)`
 
     you may need to use inside:
-      add_to_xxx(), del_from_xxx()
+      `self.add_to_xxx(object)`, `self.del_from_xxx(object)`, `self.game`, `self.state`, `self.inited`, `self.mother_page`
 
     you must use outside:
-      enter(), quit()
+      `page_obj.enter()`, `page_obj.quit()`
     """
 
     def __init__(
-        self, game: PyGame,
-        state: StateMachine, mother_page: Page,
+        self,
+        game: PyGame, state: StateMachine,
+        mother_page: Page,
         need_mother_texture: bool = False,
+        fps: int = 60,
     ) -> None:
-        super().__init__(game, state)
+        super().__init__(game, state, fps)
         self.mother_page = mother_page
-        mother_page.daughters.append(self)
+        self.mother_page._daughters.append(self)
         self._ready = False
-        self.need_mother_texture = need_mother_texture
+        self._need_mother_texture = need_mother_texture
         self._del_mother_texture = []
 
     def del_from_mother_visible(self, object) -> None:
@@ -142,7 +150,7 @@ class SubPage(Page):
         self._ready = False
 
     def _render(self) -> None:
-        if self.need_mother_texture:
+        if self._need_mother_texture:
             for i in self.mother_page._texture:
                 if i not in self._del_mother_texture:
                     i.render()

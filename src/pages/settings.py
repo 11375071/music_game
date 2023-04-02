@@ -7,9 +7,6 @@ from obj.button import ButtonAjustGroup, TextButton
 
 
 class settings(Page):
-    def __init__(self, game: PyGame, state: StateMachine) -> None:
-        super().__init__(game, state)
-
 
     # overload init
     def init(self):

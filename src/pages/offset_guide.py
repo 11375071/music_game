@@ -9,9 +9,7 @@ from obj.button import SimpleRect, TextRect, TextButton, RichButton
 
 
 class offset_guide(SubPage):
-    def __init__(self, game: PyGame, state: StateMachine, mother_page: Page) -> None:
-        super().__init__(game, state, mother_page)
-    
+
     # overload init
     def init(self):
         
