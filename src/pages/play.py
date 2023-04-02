@@ -55,8 +55,8 @@ class play(Page):
             activate_on_keydown=True
         )
         self.add_to_render_list(self.pause_button)
-        self.add_to_click_list(self.pause_button)
-        self.pause_page.del_mother_visible(self.pause_button)
+        self.add_to_check_list(self.pause_button)
+        self.pause_page.del_from_mother_visible(self.pause_button)
 
 
         def key_press(destination):
@@ -65,7 +65,7 @@ class play(Page):
                     continue
                 if abs(note.time) < 0.044:
                     self.notes.remove(note)
-                    self.del_render_list(note)
+                    self.del_from_render_list(note)
                     self.resolved_notes.append(note)
                     note.rank("perfect")
                     self.rank_text.change_text("perfect")
@@ -74,7 +74,7 @@ class play(Page):
                     return
                 elif abs(note.time) < 0.084:
                     self.notes.remove(note)
-                    self.del_render_list(note)
+                    self.del_from_render_list(note)
                     self.resolved_notes.append(note)
                     note.rank("great")
                     self.rank_text.change_text("great")
@@ -83,7 +83,7 @@ class play(Page):
                     return
                 elif abs(note.time) < 0.118:
                     self.notes.remove(note)
-                    self.del_render_list(note)
+                    self.del_from_render_list(note)
                     self.resolved_notes.append(note)
                     note.rank("good")
                     self.rank_text.change_text("good")
@@ -92,7 +92,7 @@ class play(Page):
                     return
                 elif note.time < 0.15:
                     self.notes.remove(note)
-                    self.del_render_list(note)
+                    self.del_from_render_list(note)
                     self.resolved_notes.append(note)
                     note.rank("miss")
                     self.rank_text.change_text("miss")
@@ -122,7 +122,7 @@ class play(Page):
                 click_func=(lambda x: lambda: key_press(track_to_destination(x)))(i),
                 key=key_list[i], only_use_key=True, activate_on_keydown=True,
             )
-            self.add_to_click_list(play_button)
+            self.add_to_check_list(play_button)
             self.add_to_render_list(play_button)
 
         for i in range(4):
@@ -174,7 +174,7 @@ class play(Page):
             note.appear = True
             if note.time < -0.3:
                 self.notes.remove(note)
-                self.del_render_list(note)
+                self.del_from_render_list(note)
                 self.resolved_notes.append(note)
                 note.rank("miss")
                 self.rank_text.change_text("miss")

@@ -42,7 +42,7 @@ class play_pause(SubPage):
             click_func=resume, key=self.game.it.K_SPACE
         )
         self.add_to_render_list(resume_button)
-        self.add_to_click_list(resume_button)
+        self.add_to_check_list(resume_button)
 
         replay_button = TextButton(
             self.game, "REPLAY", (self.game.size[0] / 2, self.game.size[1] / 6 * 3),
@@ -51,7 +51,7 @@ class play_pause(SubPage):
             click_func=replay
         )
         self.add_to_render_list(replay_button)
-        self.add_to_click_list(replay_button)
+        self.add_to_check_list(replay_button)
 
         menu_button = TextButton(
             self.game, "RETURN MENU", (self.game.size[0] / 2, self.game.size[1] / 6 * 4),
@@ -60,4 +60,4 @@ class play_pause(SubPage):
             click_func=menu
         )
         self.add_to_render_list(menu_button)
-        self.add_to_click_list(menu_button)
+        self.add_to_check_list(menu_button)

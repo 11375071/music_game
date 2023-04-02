@@ -12,7 +12,7 @@ class Page:
       init(), event_deal(event), control_flow()
 
     you may need to use inside:
-      add_to_xxx(), del_xxx()
+      add_to_xxx(), del_from_xxx()
 
     you must use outside:
       show()
@@ -28,16 +28,16 @@ class Page:
         self._bind: list = []
         self.frame = 0
 
-    def init(self):
+    def init(self) -> None:
         pass
 
-    def event_deal(self, event: event.Event):
+    def event_deal(self, event: event.Event) -> None:
         pass
 
-    def control_flow(self):
+    def control_flow(self) -> None:
         pass
 
-    def show(self):
+    def show(self) -> None:
 
         self.frame += 1
 
@@ -60,7 +60,7 @@ class Page:
             for i in self._bind:
                 i.event_check(event)
             self.event_deal(event)
-        
+
         for i in self._bind:
             i.control_check()
 
@@ -70,40 +70,40 @@ class Page:
 
         # if self.frame % 60 == 0:
         #     print(self.frame, len(self._texture), len(self._bind))
-        
+
         if self.frame >= 5184000:
             self.frame = 0
 
         self.game.render_update()
         self.game.clock.tick(60)
 
-    def _init(self):
+    def _init(self) -> None:
         self._texture.clear()
         self._bind.clear()
         self.init()
         self.inited = True
 
-    def del_render_list(self, object: Any) -> Any:
+    def _render(self) -> None:
+        for i in self._texture:
+            i.render()
+
+    def del_from_render_list(self, object: Any) -> Any:
         self._texture.remove(object)
 
     def add_to_render_list(self, object: Any) -> None:
         '''
-        object should have method .render()
+        object must have method `render()`
         '''
         self._texture.append(object)
 
-    def del_click_list(self, object) -> Any:
+    def del_from_check_list(self, object) -> None:
         self._bind.remove(object)
 
-    def add_to_click_list(self, object) -> Any:
+    def add_to_check_list(self, object) -> Any:
         '''
-        object should have method .event_check(event)
+        object must have method `event_check(event)` and `control_check()`
         '''
         self._bind.append(object)
-
-    def _render(self):
-        for i in self._texture:
-            i.render()
 
 
 class SubPage(Page):
@@ -114,20 +114,17 @@ class SubPage(Page):
       init(), event_deal(event), control_flow()
 
     you may need to use inside:
-      add_to_xxx(), del_xxx()
+      add_to_xxx(), del_from_xxx()
 
     you must use outside:
       enter(), quit()
-
-    you may use outside:
-      rebind_mother_page()
     """
 
     def __init__(
-            self, game: PyGame,
-            state: StateMachine, mother_page: Page,
-            need_mother_texture: bool = False,
-        ) -> None:
+        self, game: PyGame,
+        state: StateMachine, mother_page: Page,
+        need_mother_texture: bool = False,
+    ) -> None:
         super().__init__(game, state)
         self.mother_page = mother_page
         mother_page.daughters.append(self)
@@ -135,19 +132,16 @@ class SubPage(Page):
         self.need_mother_texture = need_mother_texture
         self._del_mother_texture = []
 
-    def rebind_mother_page(self, mother_page: Page):
-        self.mother_page = mother_page
-    
-    def del_mother_visible(self, object):
+    def del_from_mother_visible(self, object) -> None:
         self._del_mother_texture.append(object)
 
-    def enter(self):
+    def enter(self) -> None:
         self._ready = True
 
-    def quit(self):
+    def quit(self) -> None:
         self._ready = False
 
-    def _render(self):
+    def _render(self) -> None:
         if self.need_mother_texture:
             for i in self.mother_page._texture:
                 if i not in self._del_mother_texture:

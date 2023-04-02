@@ -41,7 +41,7 @@ class menu(Page):
             a.append_text(a_text)
             menu_scroll_area.append_choice(a)
         self.add_to_render_list(menu_scroll_area)
-        self.add_to_click_list(menu_scroll_area)
+        self.add_to_check_list(menu_scroll_area)
 
 
         def home():
@@ -54,7 +54,7 @@ class menu(Page):
             click_func=home
         )
         self.add_to_render_list(home_button)
-        self.add_to_click_list(home_button)
+        self.add_to_check_list(home_button)
 
 
         def play():
@@ -69,7 +69,7 @@ class menu(Page):
             click_func=play
         )
         self.add_to_render_list(play_button)
-        self.add_to_click_list(play_button)
+        self.add_to_check_list(play_button)
 
 
     # overload controlflow

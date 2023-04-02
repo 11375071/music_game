@@ -25,7 +25,7 @@ class settings(Page):
             click_func=home
         )
         self.add_to_render_list(self.home_button)
-        self.add_to_click_list(self.home_button)
+        self.add_to_check_list(self.home_button)
 
 
         def get_speed():
@@ -36,7 +36,7 @@ class settings(Page):
             click_func=get_speed
         )
         self.add_to_render_list(self.speed_ctrl)
-        self.add_to_click_list(self.speed_ctrl)
+        self.add_to_check_list(self.speed_ctrl)
 
 
         def get_offset():
@@ -48,7 +48,7 @@ class settings(Page):
             click_func=get_offset
         )
         self.add_to_render_list(self.offset_ctrl)
-        self.add_to_click_list(self.offset_ctrl)
+        self.add_to_check_list(self.offset_ctrl)
 
 
         offset_guide_page = offset_guide(self.game, self.state, self)
@@ -63,7 +63,7 @@ class settings(Page):
             click_func=offset_guide_func
         )
         self.add_to_render_list(self.offset_guide_button)
-        self.add_to_click_list(self.offset_guide_button)
+        self.add_to_check_list(self.offset_guide_button)
 
 
         def get_TBD():
@@ -75,7 +75,7 @@ class settings(Page):
             click_func=get_TBD
         )
         self.add_to_render_list(self.TBD_ctrl)
-        self.add_to_click_list(self.TBD_ctrl)
+        self.add_to_check_list(self.TBD_ctrl)
 
 
     # overload controlflow

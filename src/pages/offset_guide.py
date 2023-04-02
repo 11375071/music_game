@@ -39,7 +39,7 @@ class offset_guide(SubPage):
             click_func=quit
         )
         self.add_to_render_list(quit_button)
-        self.add_to_click_list(quit_button)
+        self.add_to_check_list(quit_button)
         
         def confirm():
             self.inited = False
@@ -54,7 +54,7 @@ class offset_guide(SubPage):
             click_func=confirm
         )
         self.add_to_render_list(self.confirm_button)
-        self.add_to_click_list(self.confirm_button)
+        self.add_to_check_list(self.confirm_button)
 
         self.offset_text = TextRect(
             self.game, pos=(50, 60),
@@ -81,7 +81,7 @@ class offset_guide(SubPage):
                 if note.destination != destination:
                     continue
                 if note.time < 0.15:
-                    self.del_render_list(note)
+                    self.del_from_render_list(note)
                     self.notes.remove(note)
                     note.resolved()
                     self.offset_list.append(int(note.time * 1000))
@@ -110,7 +110,7 @@ class offset_guide(SubPage):
                 click_func=(lambda x: lambda: key_press(track_to_destination(x)))(i),
                 key=key_list[i], only_use_key=True, activate_on_keydown=True,
             )
-            self.add_to_click_list(play_button)
+            self.add_to_check_list(play_button)
             self.add_to_render_list(play_button)
 
         for i in range(4):
@@ -147,7 +147,7 @@ class offset_guide(SubPage):
             note.time = note.init_time - duration * 0.001
             note.appear = True
             if note.time < -0.5:
-                self.del_render_list(note)
+                self.del_from_render_list(note)
                 self.notes.remove(note)
                 note.rank("miss")
 

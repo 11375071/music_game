@@ -41,7 +41,7 @@ class home(Page):
             key = self.game.it.K_RETURN
         )
         self.add_to_render_list(self.play_button)
-        self.add_to_click_list(self.play_button)
+        self.add_to_check_list(self.play_button)
 
 
         def settings():
@@ -64,7 +64,7 @@ class home(Page):
             click_func = settings,
         )
         self.add_to_render_list(self.setting_button)
-        self.add_to_click_list(self.setting_button)
+        self.add_to_check_list(self.setting_button)
 
 
     # overload controlflow
