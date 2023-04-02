@@ -22,6 +22,8 @@ class menu(Page):
             self.game, (600, 500), (0, 0), align = "left-up",
             band_size_ratio = (1, 0.5),
             band_density = 2.5,
+            up_scroll_activate_key = self.game.it.K_UP,
+            down_scroll_activate_key = self.game.it.K_DOWN,
             selected_activate_key = self.game.it.K_RETURN,
         )
         for i in songs.song_list:

@@ -15,7 +15,10 @@ class ScrollArea(PositionProperty):
         band_size_ratio: tuple = (1, 0.5),
         band_density: float = 2.5,
         enable_mouse_wheel: bool = True,
+        up_scroll_activate_key: Optional[int] = None,
+        down_scroll_activate_key: Optional[int] = None,
         selected_activate_key: Optional[int] = None,
+        up_down_key_press_update: bool = True,
     ) -> None:
         """
         a scroll area
@@ -27,7 +30,10 @@ class ScrollArea(PositionProperty):
         self.band_size_ratio = band_size_ratio
         self.band_density = band_density
         self.enable_mouse_wheel = enable_mouse_wheel
+        self.up_scroll_activate_key = up_scroll_activate_key
+        self.down_scroll_activate_key = down_scroll_activate_key
         self.selected_activate_key = selected_activate_key
+        self.up_down_key_press_update = up_down_key_press_update
 
         self.choices_list: List[SimpleButton] = []
         self.render_list: List[Tuple[SimpleButton, float]] = []
@@ -37,6 +43,11 @@ class ScrollArea(PositionProperty):
         self.selected: SimpleButton = None
         self.mouse_scroll_wait: float = 0
         self.align_position()
+
+        self.last_press_state: str = ""
+        self.now_press_state: str = ""
+        self.long_press_frame: int = 0
+        self.long_press_max: int = 0
     
     def collide(self, pos: tuple) -> bool:
         return self.collide_rect.collidepoint(*pos)
@@ -97,7 +108,23 @@ class ScrollArea(PositionProperty):
             elif event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 5:
                 self.now_index += 0.6
                 self.mouse_scroll_wait = 0.08
-        
+
+        if self.up_scroll_activate_key is not None:
+            if event.type == self.game.it.KEYDOWN and event.key == self.up_scroll_activate_key:
+                self.now_index -= 0.6
+                self.mouse_scroll_wait = -0.08
+                self.now_press_state = "up"
+            if event.type == self.game.it.KEYUP and event.key == self.up_scroll_activate_key:
+                self.now_press_state = "default"
+
+        if self.down_scroll_activate_key is not None:
+            if event.type == self.game.it.KEYDOWN and event.key == self.down_scroll_activate_key:
+                self.now_index += 0.6
+                self.mouse_scroll_wait = 0.08
+                self.now_press_state = "down"
+            if event.type == self.game.it.KEYUP and event.key == self.down_scroll_activate_key:
+                self.now_press_state = "default"
+
         if self.len >= 3:
             while self.now_index < 0:
                 self.now_index += self.len
@@ -149,6 +176,23 @@ class ScrollArea(PositionProperty):
             if abs(self.now_index - round(self.now_index)) > 0.0001:
                 self.now_index -= (self.now_index - round(self.now_index)) * 0.4
         
+        if self.up_down_key_press_update:
+            if self.now_press_state != "default" and self.now_press_state == self.last_press_state:
+                self.long_press_frame += 1
+            else:
+                self.last_press_state = self.now_press_state
+                self.long_press_max = 25
+                self.long_press_frame = 0
+            if self.long_press_frame >= self.long_press_max:
+                self.long_press_max = 8  # not 5 here
+                self.long_press_frame = 0
+                if self.now_press_state == "up":
+                    self.now_index -= 0.6
+                    self.mouse_scroll_wait = -0.08
+                elif self.now_press_state == "down":
+                    self.now_index += 0.6
+                    self.mouse_scroll_wait = 0.08
+
         if self.len >= 3:
             while self.now_index < 0:
                 self.now_index += self.len
