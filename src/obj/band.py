@@ -171,12 +171,12 @@ class ScrollArea(PositionProperty):
         if self.mouse_pos is not None:
             vertical_partial = (self.mouse_pos[1] - self.pos[1]) / self.size[1]
             if vertical_partial < 0.28:
-                self.now_index -= ((0.28 - vertical_partial) * (0.28 - vertical_partial) / 0.28 * 20 + 3) / self.fps * self.speed
+                self.now_index -= (((0.28 - vertical_partial) / 0.28) ** 2 * 6 + 3) / self.fps * self.speed
             elif vertical_partial <= 0.72:
                 if abs(self.now_index - round(self.now_index)) > self.precision:
                     self.now_index -= (self.now_index - round(self.now_index)) * 18 / self.fps * self.speed
             else:
-                self.now_index += ((vertical_partial - 0.72) * (vertical_partial - 0.72) / 0.28 * 20 + 3) / self.fps * self.speed
+                self.now_index += (((vertical_partial - 0.72) / 0.28) ** 2 * 6 + 3) / self.fps * self.speed
             
         else:
             if abs(self.now_index - round(self.now_index)) > self.precision:
@@ -187,10 +187,10 @@ class ScrollArea(PositionProperty):
                 self.long_press_frame += 1
             else:
                 self.last_press_state = self.now_press_state
-                self.long_press_max = 25 * self.fps / 60
+                self.long_press_max = 25 * self.fps / 60 / self.speed
                 self.long_press_frame = 0
             if self.long_press_frame >= self.long_press_max:
-                self.long_press_max = 8 * self.fps / 60 / self.speed
+                self.long_press_max = 6 * self.fps / 60 / self.speed
                 self.long_press_frame = 0
                 if self.now_press_state == "up":
                     self.now_index -= 0.6
