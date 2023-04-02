@@ -6,14 +6,38 @@ from pygame.surface import Surface
 from typing import Callable, Optional, Union, Tuple
 
 
-class ClickCheckProperty:
+class KeyCheckProperty:
     """
-    `pre_event_check(event)`, `event_check(event)`, `control_check()`
-    required property: game, click_func, key, alpha, only_use_key,
-    activate_on_keydown, long_update,
-    now_press_state, long_press_frame, long_press_max,
-    (_ready_to_click, _ready_to_key just set to False)
-    required method: collide()
+    Add some methods and properties about keys and clicks
+
+    Required Properties:
+        `game` (PyGame): define.PyGame
+        `click_func` (Callable): ... 
+        `key` (int | None): ...
+        `only_use_key` (bool): ...
+        `activate_on_keydown` (bool): ...
+        `press_update` (bool): ...
+
+        `now_press_state` (str): just make it ""
+        `long_press_frame` (int): just make it 0
+        `long_press_max` (int): just make it 0
+        `ready_to_click` (bool): just make it False
+        `ready_to_key` (bool): just make it False
+    
+    Required Methods:
+        `collide(pos) -> bool`: ...
+
+    New Methods:
+        `pre_event_check() -> tuple`: ...
+        `event_check(event) -> bool`: ...
+        `control_check() -> bool`: ...
+    
+    Changed Properties:
+        `self.now_press_state` (str): "default", "hover", "click"
+        `self.long_press_frame` (int): ...
+        `self.long_press_max` (int): ...
+        `self.ready_to_click` (bool): ...
+        `self.ready_to_key` (bool): ...
     """
 
     def __init__(self) -> None:
@@ -26,15 +50,15 @@ class ClickCheckProperty:
         self.key: Optional[int] = None
         self.only_use_key: bool = None
         self.activate_on_keydown: bool = None
-        self.long_update: bool = None
+        self.press_update: bool = None
         self.now_press_state: str = None
         self.long_press_frame: int = None
         self.long_press_max: int = None
-        self._ready_to_click: bool = None
-        self._ready_to_key: bool = None
-        assert(False, "you cannot init ClickCheckProperty")
+        self.ready_to_click: bool = None
+        self.ready_to_key: bool = None
+        assert(False, "you cannot init KeyCheckProperty")
 
-    def pre_event_check(self, event: event.Event):
+    def pre_event_check(self, event: event.Event) -> tuple:
         pos = self.game.it.mouse.get_pos()
         if event.type == self.game.it.MOUSEMOTION:
             if self.collide(pos):
@@ -46,7 +70,7 @@ class ClickCheckProperty:
                 self.now_press_state = "default"
         return pos
 
-    def event_check(self, event: event.Event):
+    def event_check(self, event: event.Event) -> bool:
 
         activated = False
 
@@ -82,38 +106,38 @@ class ClickCheckProperty:
                     if event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 1:
                         if self.collide(pos):
                             self.now_press_state = "click"
-                            self._ready_to_click = True
+                            self.ready_to_click = True
                         else:
                             self.now_press_state = "default"
-                            self._ready_to_click = False
+                            self.ready_to_click = False
                     if event.type == self.game.it.MOUSEBUTTONUP and event.button == 1:
                         if self.collide(pos):
                             self.now_press_state = "default"
-                            if self._ready_to_click:
-                                self._ready_to_click = False
+                            if self.ready_to_click:
+                                self.ready_to_click = False
                                 self.click_func()
                                 activated = True
                 if self.key is not None:
                     if event.type == self.game.it.KEYDOWN:
                         if event.key == self.key:
                             self.now_press_state = "click"
-                            self._ready_to_key = True
+                            self.ready_to_key = True
                         else:
                             self.now_press_state = "default"
-                            self._ready_to_key = False
+                            self.ready_to_key = False
                     if event.type == self.game.it.KEYUP:
                         if event.key == self.key:
                             self.now_press_state = "default"
-                            if self._ready_to_key:
-                                self._ready_to_key = False
+                            if self.ready_to_key:
+                                self.ready_to_key = False
                                 self.click_func()
                                 activated = True
         return activated
 
-    def control_check(self):
+    def control_check(self) -> bool:
         activated = False
         if self.click_func is not None:
-            if self.activate_on_keydown and self.long_update:
+            if self.activate_on_keydown and self.press_update:
                 if self.now_press_state == "click":
                     self.long_press_frame += 1
                 else:
@@ -126,10 +150,29 @@ class ClickCheckProperty:
                     activated = True
         return activated
 
+
 class ImageProperty:
     """
-    `change_image()`
-    required property: game, size, color, alpha, image, strip_alpha, scaled
+    Add some methods and properties about image
+
+    Required Properties:
+        `game` (PyGame): define.PyGame
+        `size` (tuple): (x_width, y_height), float number allowed
+        `image` (Surface): pygame.surface.Surface (recommend to use ImageProperty to get it)
+        `color` (tuple): (R, G, B), range in 0 ~ 255. Validate when `image` is None
+        `alpha` (float): 0.0 ~ 1.0, 0.0 is transparent, 1.0 is opaque
+        `image` (None | str | Surface | tuple): None (use solid color), str (picture path), Surface (pygame.surface.Surface), Tuple[Surface, ndarry] (mpimg.imread, see `collide_ignore_transparent`)
+        `collide_ignore_transparent` (bool): if is True, `collide()` will dismiss area where picture's alpha == 0. If enabled, use Tuple[Surface, ndarry] as `image` will load faster
+        `already_scaled` (bool): if is True, `change_image()` will not resize
+    
+    New Methods:
+        `change_image()`: convert `self.image` (None | str | Surface | tuple) into `self.image` (Surface)
+    
+    New Properties:
+        `self.collide_detect_used_image` (ndarray): in `change_image()` only if `collide_ignore_transparent` is True
+    
+    Changed Properties:
+        `self.image` (Surface): in `change_image()`
     """
     
     def __init__(self) -> None:
@@ -142,34 +185,34 @@ class ImageProperty:
         self.color: tuple = None
         self.alpha: float = None
         self.image: Optional[Union[str, Surface, Tuple[Surface, ndarray]]] = None
-        self.strip_alpha: bool = None
-        self.scaled: bool = None
+        self.collide_ignore_transparent: bool = None
+        self.already_scaled: bool = None
         assert(False, "you cannot init ImageProperty")
 
-    def change_image(self):
+    def change_image(self) -> None:
         if type(self.image) is tuple:
-            if self.strip_alpha:
-                self.load_image = self.image[1]
-            if self.scaled:
+            if self.collide_ignore_transparent:
+                self.collide_detect_used_image = self.image[1]
+            if self.already_scaled:
                 self.image = self.image[0]
             else:
                 self.image = self.game.it.transform.scale(
                     self.image[0], self.size
                 )
         elif type(self.image) is Surface:
-            if self.strip_alpha:
-                assert(False, "Surface cannot support strip_alpha, try Tuple[Surface, ndarray] instead")
-            if self.scaled:
+            if self.collide_ignore_transparent:
+                assert(False, "Surface cannot support collide_ignore_transparent, try Tuple[Surface, ndarray] instead")
+            if self.already_scaled:
                 self.image = self.image
             else:
                 self.image = self.game.it.transform.scale(
                     self.image, self.size
                 )
         elif type(self.image) is str:
-            if self.strip_alpha:
-                self.load_image = mpimg.imread(self.image)
+            if self.collide_ignore_transparent:
+                self.collide_detect_used_image = mpimg.imread(self.image)
             self.image = self.game.it.image.load(self.image)
-            if self.scaled:
+            if self.already_scaled:
                 self.image = self.image
             else:
                 self.image = self.game.it.transform.scale(
@@ -183,8 +226,28 @@ class ImageProperty:
 
 class PositionProperty:
     """
-    `align_position()`, `change_position(pos, size)`
-    required property: image, game, size, pos, align, (normal_image just set to None)
+    Add some methods and properties about position
+
+    Required Properties:
+        `game` (PyGame): define.PyGame
+        `size` (tuple): (x_width, y_height), float number allowed
+        `pos` (tuple): (x_pos, y_pos), float number allowed
+        `align` (str): "center", "left-up", "left-down", "right-up", "right-down" to anchor with `pos`
+        `image` (Surface): pygame.surface.Surface (recommend to use ImageProperty to get it)
+
+        `original_image` (None): just make it None
+    
+    New Methods:
+        `align_position()`: align self.image's position, generate self.collide_rect
+        `resize(pos, size)`: change and align self.image and self.collide_rect's size and position
+        `resize_collide_rect(pos, size)`: only change and align self.collide_rect's size and position
+    
+    New Properties:
+        `self.pos_align` (tuple): in `align_position()`, `resize(pos, size)`
+        `self.collide_rect` (Surface): in `align_position()`, `resize(pos, size)` and `resize_collide_rect(pos, size)`
+    
+    Changed Properties:
+        `self.original_image` (Surface): in `resize(pos, size)`
     """
     
     def __init__(self) -> None:
@@ -197,10 +260,10 @@ class PositionProperty:
         self.pos: tuple = None
         self.align: str = None
         self.image: Surface = None
-        self.normal_image: Optional[Surface] = None
+        self.original_image: Optional[Surface] = None
         assert(False, "you cannot init PositionProperty")
 
-    def align_position(self):
+    def align_position(self) -> None:
         if self.align == "center":
             self.pos_align = self.pos[0] - self.size[0] / 2, \
                 self.pos[1] - self.size[1] / 2
@@ -213,9 +276,9 @@ class PositionProperty:
             self.pos_align = self.pos[0], self.pos[1] - self.size[1]
         else:  # "left-up"
             self.pos_align = self.pos
-        self.rect = self.game.it.Rect(self.pos_align, self.size)
+        self.collide_rect = self.game.it.Rect(self.pos_align, self.size)
 
-    def change_position(self, pos: tuple, size: tuple):
+    def resize_collide_rect(self, pos: tuple, size: tuple) -> None:
         if self.align == "center":
             pos_align = pos[0] - size[0] / 2, \
                 pos[1] - size[1] / 2
@@ -228,12 +291,12 @@ class PositionProperty:
             pos_align = pos[0], pos[1] - size[1]
         else:  # "left-up"
             pos_align = pos
-        self.rect = self.game.it.Rect(pos_align, size)
-        return pos_align, size
+        self.collide_rect = self.game.it.Rect(pos_align, size)
     
-    def resize(self, pos: tuple, size: tuple):
-        if self.normal_image is None:
-            self.normal_image = self.image.copy()
-        self.image = self.game.it.transform.scale(self.normal_image, size)
+    def resize(self, pos: tuple, size: tuple) -> None:
+        if self.original_image is None:
+            self.original_image = self.image.copy()
+        self.image = self.game.it.transform.scale(self.original_image, size)
         self.pos = pos
-        self.pos_align, self.size = self.change_position(pos, size)
+        self.size = size
+        self.align_position()

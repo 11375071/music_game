@@ -26,12 +26,12 @@ class home(Page):
         play_origin = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
             (0, 0), "left-up", image = img.homepage_play_button_tuple_1,
-            strip_alpha = True,
+            collide_ignore_transparent = True,
         )
         play_selected = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
             (0, 0), "left-up", image = img.homepage_play_button_tuple_2,
-            strip_alpha = True,
+            collide_ignore_transparent = True,
         )
         self.play_button = RichButton(
             self.game,
@@ -50,12 +50,12 @@ class home(Page):
         setting_origin = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
             (0, 0), "left-up", image = img.homepage_settings_button_tuple_1,
-            strip_alpha = True,
+            collide_ignore_transparent = True,
         )
         setting_selected = SimpleRect(
             self.game, (self.game.size[0], self.game.size[1]),
             (0, 0), "left-up", image = img.homepage_settings_button_tuple_2,
-            strip_alpha = True,
+            collide_ignore_transparent = True,
         )
         self.setting_button = RichButton(
             self.game,

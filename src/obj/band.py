@@ -5,7 +5,7 @@ from utils.define import PyGame
 from pygame.surface import Surface
 from typing import Callable, Optional, Union, Tuple, List, Any
 from obj.button import SimpleButton
-from obj.property import ClickCheckProperty, PositionProperty, ImageProperty
+from obj.property import KeyCheckProperty, PositionProperty, ImageProperty
 
 class ScrollArea(PositionProperty):
     def __init__(
@@ -26,14 +26,14 @@ class ScrollArea(PositionProperty):
         self.mouse_scroll_wait: float = 0
         self.align_position()
     
-    def collide(self, pos: tuple):
-        return self.rect.collidepoint(*pos)
+    def collide(self, pos: tuple) -> bool:
+        return self.collide_rect.collidepoint(*pos)
 
-    def append_choice(self, object: Any):
+    def append_choice(self, object: Any) -> None:
         self.choices_list.append(object)
         self.len = len(self.choices_list)
 
-    def render(self):
+    def render(self) -> None:
         index = 0
         self.render_list.clear()
 
@@ -63,10 +63,45 @@ class ScrollArea(PositionProperty):
             i[0].render()
         self.render_list.reverse()
 
-    def control_check(self):
+    def event_check(self, event) -> bool:
+
+        activated = False
+
+        for i in self.render_list:
+            if i[0].event_check(event):
+                activated = True
+                break  # do not activate the covered button
+
+        self.mouse_pos = self.game.it.mouse.get_pos()
+        if not self.collide(self.mouse_pos):
+            self.mouse_pos = None
+        if event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 4:
+            self.now_index -= 0.6
+            self.mouse_scroll_wait = -0.08
+        elif event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 5:
+            self.now_index += 0.6
+            self.mouse_scroll_wait = 0.08
+        
+        if self.len >= 3:
+            while self.now_index < 0:
+                self.now_index += self.len
+            while self.now_index > self.len - 1:
+                self.now_index -= self.len
+        else:
+            if self.now_index < 0:
+                self.now_index = 0
+            elif self.now_index > self.len - 1:
+                self.now_index = self.len - 1
+
+        return activated
+
+    def control_check(self) -> bool:
+
+        activated = False
 
         for i in self.render_list:
             if i[0].control_check():
+                activated = True
                 break  # do not activate the covered button
 
         if self.mouse_scroll_wait != 0:
@@ -100,30 +135,5 @@ class ScrollArea(PositionProperty):
                 self.now_index = 0
             elif self.now_index > self.len - 1:
                 self.now_index = self.len - 1
-
-    def event_check(self, event):
-
-        for i in self.render_list:
-            if i[0].event_check(event):
-                break  # do not activate the covered button
-
-        self.mouse_pos = self.game.it.mouse.get_pos()
-        if not self.collide(self.mouse_pos):
-            self.mouse_pos = None
-        if event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 4:
-            self.now_index -= 0.6
-            self.mouse_scroll_wait = -0.08
-        elif event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 5:
-            self.now_index += 0.6
-            self.mouse_scroll_wait = 0.08
         
-        if self.len >= 3:
-            while self.now_index < 0:
-                self.now_index += self.len
-            while self.now_index > self.len - 1:
-                self.now_index -= self.len
-        else:
-            if self.now_index < 0:
-                self.now_index = 0
-            elif self.now_index > self.len - 1:
-                self.now_index = self.len - 1
+        return activated

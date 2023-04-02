@@ -34,9 +34,9 @@ class Note(ImageProperty):
 
         self.rank_type = "none"
         self.appear = False
-        self.strip_alpha = False
-        self.scaled = True
 
+        self.collide_ignore_transparent = False
+        self.already_scaled = True
         self.change_image()
         self.align_destination()
 
