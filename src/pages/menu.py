@@ -19,11 +19,14 @@ class menu(Page):
             self.state.song = song
             self.state.state = "play"
         menu_scroll_area = ScrollArea(
-            self.game, (600, 500), (0, 0), align = "left-up"
+            self.game, (600, 500), (0, 0), align = "left-up",
+            band_size_ratio = (1, 0.5),
+            band_density = 2.5,
+            selected_activate_key = self.game.it.K_RETURN,
         )
         for i in songs.song_list:
             a = MultipleTextButton(
-                self.game, (600, 250), (0, 0), align = "center",
+                self.game, (600, 250), (0, 0),
                 color = (random.randint(50, 255), random.randint(50, 255), random.randint(50, 255)),
                 # if not add a lambda scope, all function will be the same as the last function
                 click_func = (lambda what: lambda: choose_song(what))(i)

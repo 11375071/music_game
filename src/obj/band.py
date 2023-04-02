@@ -1,3 +1,4 @@
+import math
 import bisect
 from pygame import event
 import utils.color as color
@@ -11,11 +12,22 @@ class ScrollArea(PositionProperty):
     def __init__(
         self, game: PyGame,
         size: tuple, pos: tuple, align: str = "center",
+        band_size_ratio: tuple = (1, 0.5),
+        band_density: float = 2.5,
+        enable_mouse_wheel: bool = True,
+        selected_activate_key: Optional[int] = None,
     ) -> None:
+        """
+        a scroll area
+        """
         self.game = game
         self.size = size
         self.pos = pos
         self.align = align
+        self.band_size_ratio = band_size_ratio
+        self.band_density = band_density
+        self.enable_mouse_wheel = enable_mouse_wheel
+        self.selected_activate_key = selected_activate_key
 
         self.choices_list: List[SimpleButton] = []
         self.render_list: List[Tuple[SimpleButton, float]] = []
@@ -45,8 +57,10 @@ class ScrollArea(PositionProperty):
             else:
                 difference = index - self.now_index
             scale = 5 / (abs(difference) + 5)
-            size = self.size[0] * scale, self.size[1] / 2  * scale
-            pos = size[0] / 2 + self.pos[0], self.size[1] / 2 * (1 + difference / 2.2)
+            i.align = "center"
+            size = self.size[0] * self.band_size_ratio[0] * scale, \
+                self.size[1] * self.band_size_ratio[1] * scale
+            pos = size[0] / 2 + self.pos[0], self.size[1] / 2 * (1 + difference / self.band_density * scale) + self.pos[1]
             i.resize(pos, size)
             i.change_image()
 
@@ -57,7 +71,7 @@ class ScrollArea(PositionProperty):
 
             index += 1
         
-        self.selected = self.render_list[0]
+        self.selected = self.render_list[0][0]
         self.render_list.reverse()
         for i in self.render_list:
             i[0].render()
@@ -75,12 +89,14 @@ class ScrollArea(PositionProperty):
         self.mouse_pos = self.game.it.mouse.get_pos()
         if not self.collide(self.mouse_pos):
             self.mouse_pos = None
-        if event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 4:
-            self.now_index -= 0.6
-            self.mouse_scroll_wait = -0.08
-        elif event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 5:
-            self.now_index += 0.6
-            self.mouse_scroll_wait = 0.08
+        
+        if self.enable_mouse_wheel:
+            if event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 4:
+                self.now_index -= 0.6
+                self.mouse_scroll_wait = -0.08
+            elif event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 5:
+                self.now_index += 0.6
+                self.mouse_scroll_wait = 0.08
         
         if self.len >= 3:
             while self.now_index < 0:
@@ -92,6 +108,14 @@ class ScrollArea(PositionProperty):
                 self.now_index = 0
             elif self.now_index > self.len - 1:
                 self.now_index = self.len - 1
+
+        if self.selected_activate_key is not None and self.selected is not None and self.selected.click_func is not None:
+            if event.type == self.game.it.KEYDOWN and event.key == self.selected_activate_key:
+                self.selected.now_press_state = "click"
+                self.selected.click_func()
+                activated = True
+            if event.type == self.game.it.KEYUP and event.key == self.selected_activate_key:
+                self.selected.now_press_state = "default"
 
         return activated
 
