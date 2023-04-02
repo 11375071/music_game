@@ -12,7 +12,8 @@ class ScrollArea(PositionProperty):
     def __init__(
         self, game: PyGame,
         size: tuple, pos: tuple, align: str = "center",
-        band_size_ratio: tuple = (1, 0.5),
+        fps: int = 60, speed: float = 1.0,
+        band_size_ratio: tuple = (1.0, 0.5),
         band_density: float = 2.5,
         enable_mouse_wheel: bool = True,
         up_scroll_activate_key: Optional[int] = None,
@@ -27,6 +28,8 @@ class ScrollArea(PositionProperty):
         self.size = size
         self.pos = pos
         self.align = align
+        self.fps = fps
+        self.speed = speed
         self.band_size_ratio = band_size_ratio
         self.band_density = band_density
         self.enable_mouse_wheel = enable_mouse_wheel
@@ -48,6 +51,9 @@ class ScrollArea(PositionProperty):
         self.now_press_state: str = ""
         self.long_press_frame: int = 0
         self.long_press_max: int = 0
+
+        self.scroll_decay = math.pow(1.2, -60 / self.fps)
+        self.precision = math.pow(0.01, math.sqrt(self.fps / 60))
     
     def collide(self, pos: tuple) -> bool:
         return self.collide_rect.collidepoint(*pos)
@@ -104,15 +110,15 @@ class ScrollArea(PositionProperty):
         if self.enable_mouse_wheel:
             if event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 4:
                 self.now_index -= 0.6
-                self.mouse_scroll_wait = -0.08
+                self.mouse_scroll_wait = -4.8 / self.fps
             elif event.type == self.game.it.MOUSEBUTTONDOWN and event.button == 5:
                 self.now_index += 0.6
-                self.mouse_scroll_wait = 0.08
+                self.mouse_scroll_wait = 4.8 / self.fps
 
         if self.up_scroll_activate_key is not None:
             if event.type == self.game.it.KEYDOWN and event.key == self.up_scroll_activate_key:
                 self.now_index -= 0.6
-                self.mouse_scroll_wait = -0.08
+                self.mouse_scroll_wait = -4.8 / self.fps
                 self.now_press_state = "up"
             if event.type == self.game.it.KEYUP and event.key == self.up_scroll_activate_key:
                 self.now_press_state = "default"
@@ -120,7 +126,7 @@ class ScrollArea(PositionProperty):
         if self.down_scroll_activate_key is not None:
             if event.type == self.game.it.KEYDOWN and event.key == self.down_scroll_activate_key:
                 self.now_index += 0.6
-                self.mouse_scroll_wait = 0.08
+                self.mouse_scroll_wait = 4.8 / self.fps
                 self.now_press_state = "down"
             if event.type == self.game.it.KEYUP and event.key == self.down_scroll_activate_key:
                 self.now_press_state = "default"
@@ -157,41 +163,41 @@ class ScrollArea(PositionProperty):
 
         if self.mouse_scroll_wait != 0:
             self.now_index += self.mouse_scroll_wait
-            if abs(self.mouse_scroll_wait) > 0.01:
-                self.mouse_scroll_wait /= 1.2
+            if abs(self.mouse_scroll_wait) > self.precision:
+                self.mouse_scroll_wait *= self.scroll_decay
             else:
                 self.mouse_scroll_wait = 0
 
         if self.mouse_pos is not None:
             vertical_partial = (self.mouse_pos[1] - self.pos[1]) / self.size[1]
             if vertical_partial < 0.28:
-                self.now_index -= (0.28 - vertical_partial) / 5 + 0.05
+                self.now_index -= ((0.28 - vertical_partial) * (0.28 - vertical_partial) / 0.28 * 20 + 3) / self.fps * self.speed
             elif vertical_partial <= 0.72:
-                if abs(self.now_index - round(self.now_index)) > 0.0001:
-                    self.now_index -= (self.now_index - round(self.now_index)) * 0.3
+                if abs(self.now_index - round(self.now_index)) > self.precision:
+                    self.now_index -= (self.now_index - round(self.now_index)) * 18 / self.fps * self.speed
             else:
-                self.now_index += (vertical_partial - 0.72) / 5 + 0.05
+                self.now_index += ((vertical_partial - 0.72) * (vertical_partial - 0.72) / 0.28 * 20 + 3) / self.fps * self.speed
             
         else:
-            if abs(self.now_index - round(self.now_index)) > 0.0001:
-                self.now_index -= (self.now_index - round(self.now_index)) * 0.4
+            if abs(self.now_index - round(self.now_index)) > self.precision:
+                self.now_index -= (self.now_index - round(self.now_index)) * 24 / self.fps * self.speed
         
         if self.up_down_key_press_update:
             if self.now_press_state != "default" and self.now_press_state == self.last_press_state:
                 self.long_press_frame += 1
             else:
                 self.last_press_state = self.now_press_state
-                self.long_press_max = 25
+                self.long_press_max = 25 * self.fps / 60
                 self.long_press_frame = 0
             if self.long_press_frame >= self.long_press_max:
-                self.long_press_max = 8  # not 5 here
+                self.long_press_max = 8 * self.fps / 60 / self.speed
                 self.long_press_frame = 0
                 if self.now_press_state == "up":
                     self.now_index -= 0.6
-                    self.mouse_scroll_wait = -0.08
+                    self.mouse_scroll_wait = -4.8 / self.fps
                 elif self.now_press_state == "down":
                     self.now_index += 0.6
-                    self.mouse_scroll_wait = 0.08
+                    self.mouse_scroll_wait = 4.8 / self.fps
 
         if self.len >= 3:
             while self.now_index < 0:

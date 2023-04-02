@@ -21,9 +21,9 @@ def main_game():
     state["normal"].setdefault("offset", -40)
 
     home_page = home(game, state)
-    menu_page = menu(game, state)
+    menu_page = menu(game, state, 240)
     settings_page = settings(game, state)
-    play_page = play(game, state)
+    play_page = play(game, state, 120)
 
     while not state.quit:
         if state == "home": home_page.show()

@@ -18,6 +18,7 @@ class menu(Page):
             self.state.state = "play"
         menu_scroll_area = ScrollArea(
             self.game, (600, 500), (0, 0), align = "left-up",
+            fps = self.fps, speed = 1.0,
             band_size_ratio = (1, 0.5),
             band_density = 2.5,
             up_scroll_activate_key = self.game.it.K_UP,

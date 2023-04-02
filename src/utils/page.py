@@ -12,7 +12,7 @@ class Page:
       `init(self)`, `event_deal(self, event)`, `control_flow(self)`
 
     you may need to use inside:
-      `self.add_to_xxx(object)`, `self.del_from_xxx(object)`, `self.game`, `self.state`, `self.inited`
+      `self.add_to_xxx(object)`, `self.del_from_xxx(object)`, `self.game`, `self.state`, `self.fps`, `self.inited`
 
     you must use outside:
       `page_obj.show()`
@@ -120,7 +120,7 @@ class SubPage(Page):
       `init(self)`, `event_deal(self, event)`, `control_flow(self)`
 
     you may need to use inside:
-      `self.add_to_xxx(object)`, `self.del_from_xxx(object)`, `self.game`, `self.state`, `self.inited`, `self.mother_page`
+      `self.add_to_xxx(object)`, `self.del_from_xxx(object)`, `self.game`, `self.state`, `self.fps`, `self.inited`, `self.mother_page`
 
     you must use outside:
       `page_obj.enter()`, `page_obj.quit()`

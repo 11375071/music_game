@@ -48,7 +48,7 @@ class settings(Page):
         self.add_to_check_list(self.offset_ctrl)
 
 
-        offset_guide_page = offset_guide(self.game, self.state, self)
+        offset_guide_page = offset_guide(self.game, self.state, self, fps = 120)
         def offset_guide_func():
             self.inited = False
             offset_guide_page.enter()
